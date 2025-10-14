@@ -12,22 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
   m_Name: DirtFloorRuleTile
   m_EditorClassIdentifier: Unity.2D.Tilemap.Extras::UnityEngine.RuleTile
-  m_DefaultSprite: {fileID: 345662555, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+  m_DefaultSprite: {fileID: -236474864, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
   m_DefaultGameObject: {fileID: 0}
   m_DefaultColliderType: 0
   m_TilingRules:
   - m_Id: 3
     m_Sprites:
-    - {fileID: 345662555, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-    - {fileID: 345662555, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-    - {fileID: 345662555, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-    - {fileID: 345662555, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-    - {fileID: -1492242896, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-    - {fileID: 345662555, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-    - {fileID: -1492242896, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-    - {fileID: -1492242896, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-    - {fileID: -1492242896, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-    - {fileID: 297736488, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+    - {fileID: -236474864, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+    - {fileID: -236474864, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+    - {fileID: -236474864, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+    - {fileID: -236474864, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+    - {fileID: -1296230581, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+    - {fileID: -236474864, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+    - {fileID: -236474864, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+    - {fileID: -1296230581, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+    - {fileID: -1296230581, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+    - {fileID: -358725971, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
     m_GameObject: {fileID: 0}
     m_MinAnimationSpeed: 1
     m_MaxAnimationSpeed: 1
