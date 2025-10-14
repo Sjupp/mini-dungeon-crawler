@@ -5,11 +5,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Attack", menuName = "Create Attack")]
 public class AttackDataSO : ScriptableObject
 {
-    public GameObject Hitbox;
-    public GameObject VFX;
-    public AttackTimeline AttackTimeline;
     public string AnimationName;
     public int Damage;
+
+    public AttackTimeline AttackTimeline;
+    public Vector3 HitboxPosition = new(1f, 0.5f, 0f);
+    public Vector3 HitboxScale = Vector3.one;
+
+    public GameObject VFX;
 
     //public float Sharpness; ???
     //public float Sturdiness; ???

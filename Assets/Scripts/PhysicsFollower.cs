@@ -72,7 +72,7 @@ public class PhysicsFollower : MonoBehaviour
         {
             if (!_facingRight)
             {
-                transform.GetChild(0).localRotation = Quaternion.Euler(0f, 0f, 0f);
+                transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                 _facingRight = true;
                 ChangedDirection?.Invoke(_facingRight);
             }
@@ -81,7 +81,7 @@ public class PhysicsFollower : MonoBehaviour
         {
             if (_facingRight)
             {
-                transform.GetChild(0).localRotation = Quaternion.Euler(0f, 180f, 0f);
+                transform.rotation = Quaternion.Euler(0f, 180f, 0f);
                 _facingRight = false;
                 ChangedDirection?.Invoke(_facingRight);
             }

@@ -3,16 +3,19 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    public ItemDataSO ItemData;
-
     [SerializeField]
-    internal Animator _animator = null;
+    private ItemDataSO _itemData;
+    [SerializeField]
+    private Animator _animator = null;
     [SerializeField]
     private SpriteRenderer _spriteRenderer = null;
 
+    public Animator Animator { get => _animator; set => _animator = value; }
+    public ItemDataSO ItemData { get => _itemData; set => _itemData = value; }
+
     public void Init(ItemDataSO itemData)
     {
-        this.ItemData = itemData;
+        _itemData = itemData;
         _spriteRenderer.sprite = itemData.Sprite;
         _animator.Play(itemData.IdleAnimationName);
         gameObject.name = "item_" + itemData.ItemName;
@@ -26,7 +29,7 @@ public class Item : MonoBehaviour
     public void UseItem(InputType inputType)
     {
         WeaponCommand command = new WeaponCommand(
-            ItemData.WeaponType,
+            _itemData.WeaponType,
             inputType,
             Time.time
             );

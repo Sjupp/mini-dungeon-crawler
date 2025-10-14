@@ -12,17 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab8076bd3a2b2ba429d1261eef7baa8f, type: 3}
   m_Name: Sword_3
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
-  CommandTransitions:
-  - WeaponCommand:
-      WeaponType: 1
-      InputType: 0
-      Timestamp: 0
-    AttackDataSO: {fileID: 0}
-  Hitbox: {fileID: 0}
-  VFX: {fileID: 0}
-  AttackTimeline:
-    Windup: 0
-    Duration: 0
-    Winddown: 0
   AnimationName: Sword_Stab
   Damage: 5
+  AttackTimeline:
+    Windup: 0.1
+    Duration: 0.2
+    Winddown: 0
+  HitboxPosition: {x: 1, y: 0.5, z: 0}
+  HitboxScale: {x: 1, y: 1, z: 1}
+  VFX: {fileID: 0}

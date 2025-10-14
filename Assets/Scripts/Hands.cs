@@ -51,7 +51,7 @@ public class Hands : MonoBehaviour
         {
             if (_heldItemMain != null)
             {
-                _heldItemMain.UseItem(InputType.Tap);
+                Attack(_heldItemMain, InputType.Tap);
             }
         }
 
@@ -59,9 +59,23 @@ public class Hands : MonoBehaviour
         {
             if (_heldItemOff != null)
             {
-                _heldItemOff.UseItem(InputType.Tap);
+                Attack(_heldItemOff, InputType.Tap);
             }
         }
+    }
+
+    private void Attack(Item item, InputType inputType)
+    {
+        WeaponCommand command = new WeaponCommand(
+            item.ItemData.WeaponType,
+            inputType,
+            Time.time
+            );
+
+        var attackToUse = AttackManager.Instance.GetNextAttack(command);
+
+        item.Animator.Play(attackToUse.AnimationName, 0, 0f);
+        _owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse.AttackTimeline.Windup, attackToUse.AttackTimeline.Duration);
     }
 
     private void OnDrawGizmos()

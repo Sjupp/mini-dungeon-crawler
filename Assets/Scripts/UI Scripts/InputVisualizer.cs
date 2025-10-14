@@ -8,17 +8,17 @@ public class InputVisualizer : MonoBehaviour
     //private List<InputElement> _elementsPool = null;
 
     [SerializeField]
-    private List<Sprite> _weaponTypeIcons = new();
-
-    [SerializeField]
     private float _elementSpacing = 10f;
     [SerializeField]
     private int _maxElements = 3;
 
     [SerializeField]
     private InputElement _elementPrefab = null;
+    [SerializeField]
+    private SequenceNotice _sequenceNoticePrefab = null;
 
     private List<InputElement> _activeElements = new();
+    private List<SequenceNotice> _activeSequences = new();
 
     private void Start()
     {
@@ -28,6 +28,39 @@ public class InputVisualizer : MonoBehaviour
 
     private void OnAttack(WeaponCommand inputType, AttackDataSO attackData, int commandHistoryCount, List<AttackSequenceSO> finishedSequences)
     {
+        UpdateCommandFeed(inputType, attackData);
+
+        UpdateSequenceFeed(finishedSequences);
+    }
+
+    private void UpdateSequenceFeed(List<AttackSequenceSO> finishedSequences)
+    {
+        if (_activeSequences.Count > 0)
+        {
+            for (int i = 0; i < _activeSequences.Count; i++)
+            {
+                var seq = _activeSequences[i];
+                Destroy(seq.gameObject);
+            }
+            _activeSequences.Clear();
+        }
+
+        if (finishedSequences != null)
+        {
+            for (int i = 0; i < finishedSequences.Count; i++)
+            {
+                var createdElement = Instantiate(_sequenceNoticePrefab,
+                          transform.position + (50f * Vector3.up) + ((165f + 20) * i * Vector3.up),
+                          Quaternion.identity,
+                          transform);
+                createdElement.Init(finishedSequences[i]);
+                _activeSequences.Add(createdElement);
+            }
+        }
+    }
+
+    private void UpdateCommandFeed(WeaponCommand inputType, AttackDataSO attackData)
+    {
         if (_activeElements.Count < _maxElements)
         {
             var createdElement = Instantiate(_elementPrefab,
@@ -35,7 +68,7 @@ public class InputVisualizer : MonoBehaviour
                                   Quaternion.identity,
                                   transform);
 
-            createdElement.Init(GetIconByWeaponType(inputType.WeaponType), attackData.name);
+            createdElement.Init(IconHelper.Instance.GetIconByWeaponType(inputType.WeaponType), attackData.name);
             _activeElements.Add(createdElement);
         }
         else
@@ -45,7 +78,7 @@ public class InputVisualizer : MonoBehaviour
                       Quaternion.identity,
                       transform);
 
-            createdElement.Init(GetIconByWeaponType(inputType.WeaponType), attackData.name);
+            createdElement.Init(IconHelper.Instance.GetIconByWeaponType(inputType.WeaponType), attackData.name);
             _activeElements.Add(createdElement);
 
             for (int i = 0; i < _activeElements.Count - 1; i++)
@@ -53,7 +86,6 @@ public class InputVisualizer : MonoBehaviour
                 if (i == 0)
                 {
                     var leftmostElement = _activeElements[0];
-                    //_activeElements.RemoveAt(0);
                     Tween.Position(leftmostElement.transform, leftmostElement.transform.position + Vector3.left * (_elementPrefab.Width + _elementSpacing), 0.1f).OnComplete(() =>
                     {
                         Destroy(leftmostElement.gameObject);
@@ -65,22 +97,6 @@ public class InputVisualizer : MonoBehaviour
                 }
             }
             _activeElements.RemoveAt(0);
-        }
-    }
-
-    private Sprite GetIconByWeaponType(WeaponType type)
-    {
-        switch (type)
-        {
-            case WeaponType.Any:
-                return _weaponTypeIcons[1];
-            case WeaponType.Sword:
-                return _weaponTypeIcons[2];
-            case WeaponType.Shield:
-                return _weaponTypeIcons[3];
-            default:
-                Debug.LogError("Icon not yet implemented");
-                return _weaponTypeIcons[0];
         }
     }
 }
