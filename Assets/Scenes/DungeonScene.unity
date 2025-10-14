@@ -366,6 +366,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: InputElementUI (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7617225781129106712, guid: e0d8dcb6894878346808423200ada68b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -652,6 +656,10 @@ PrefabInstance:
     - target: {fileID: 7617225781129106712, guid: e0d8dcb6894878346808423200ada68b, type: 3}
       propertyPath: m_Name
       value: InputElementUI (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7617225781129106712, guid: e0d8dcb6894878346808423200ada68b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -960,6 +968,10 @@ PrefabInstance:
     - target: {fileID: 7617225781129106712, guid: e0d8dcb6894878346808423200ada68b, type: 3}
       propertyPath: m_Name
       value: InputElementUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 7617225781129106712, guid: e0d8dcb6894878346808423200ada68b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4393,10 +4405,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputVisualizer
   _weaponTypeIcons:
-  - {fileID: -604282835, guid: 731d9bac0a064b74b919de7ae6d2aedd, type: 3}
-  - {fileID: -554606102, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-  - {fileID: -1001580148, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
-  - {fileID: 657584367, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+  - {fileID: 21300000, guid: 1f8ba21c016f50246923a65ba7678ff0, type: 3}
+  - {fileID: -488288984, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+  - {fileID: 1818222854, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+  - {fileID: -1337847776, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
   _elementSpacing: 10
   _maxElements: 3
   _elementPrefab: {fileID: 2636570182082789042, guid: e0d8dcb6894878346808423200ada68b, type: 3}
