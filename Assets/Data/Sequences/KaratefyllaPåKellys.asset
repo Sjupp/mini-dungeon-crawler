@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 441c845fc1962af4f8b691249db29359, type: 3}
+  m_Name: "KaratefyllaP\xE5Kellys"
+  m_EditorClassIdentifier: Assembly-CSharp::AttackSequenceSO
+  CommandSequence:
+  - WeaponCommand:
+      WeaponType: 1
+      InputType: 0
+      Timestamp: 0
+    AttackData: {fileID: 11400000, guid: 5cf6135dd1710394ba2c6a2b0fcfaf2a, type: 2}
+  - WeaponCommand:
+      WeaponType: 1
+      InputType: 0
+      Timestamp: 0
+    AttackData: {fileID: 11400000, guid: cf61f8395c0fb6a448b355501cb94660, type: 2}
+  - WeaponCommand:
+      WeaponType: 1
+      InputType: 0
+      Timestamp: 0
+    AttackData: {fileID: 11400000, guid: a122fe1dc8e5a204a98ffcfbef0a02da, type: 2}
+  - WeaponCommand:
+      WeaponType: 2
+      InputType: 0
+      Timestamp: 0
+    AttackData: {fileID: 11400000, guid: 568b7278546d4984bb6cdb72f941b213, type: 2}
+  - WeaponCommand:
+      WeaponType: 2
+      InputType: 0
+      Timestamp: 0
+    AttackData: {fileID: 11400000, guid: 7159185702ec171489531f91b1eaa04d, type: 2}
+  - WeaponCommand:
+      WeaponType: 1
+      InputType: 0
+      Timestamp: 0
+    AttackData: {fileID: 11400000, guid: 5cf6135dd1710394ba2c6a2b0fcfaf2a, type: 2}
+  - WeaponCommand:
+      WeaponType: 2
+      InputType: 0
+      Timestamp: 0
+    AttackData: {fileID: 11400000, guid: 568b7278546d4984bb6cdb72f941b213, type: 2}
+  - WeaponCommand:
+      WeaponType: 1
+      InputType: 0
+      Timestamp: 0
+    AttackData: {fileID: 11400000, guid: 1b49478e587c7c1488dba8146be1afb5, type: 2}
