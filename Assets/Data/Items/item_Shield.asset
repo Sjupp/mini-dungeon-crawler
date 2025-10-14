@@ -16,7 +16,7 @@ MonoBehaviour:
   ItemName: Shield
   WeaponType: 2
   IdleAnimationName: Shield_Idle
-  Sprite: {fileID: 657584367, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+  Sprite: {fileID: 854561743, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
   FlipX: 0
   Offset: {x: 0, y: 0, z: 0}
   Rotation: 0

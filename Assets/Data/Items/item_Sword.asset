@@ -16,7 +16,7 @@ MonoBehaviour:
   ItemName: Sword
   WeaponType: 1
   IdleAnimationName: Sword_Idle
-  Sprite: {fileID: -1001580148, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+  Sprite: {fileID: 1818222854, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
   FlipX: 1
   Offset: {x: 0.2, y: 0.2, z: 0}
   Rotation: -45
