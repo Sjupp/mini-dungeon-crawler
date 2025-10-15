@@ -10,11 +10,15 @@ public class UnitBehaviour : MonoBehaviour, IDamagable
 
     [SerializeField]
     private SpriteRenderer _unitSprite = null;
+    [SerializeField]
+    private Transform _visualsTransform = null;
+    //[SerializeField]
+    //private ShakeSettings _shakeSettings = null;
 
     public void TakeDamage(int damage)
     {
         _health -= damage;
-        OnTakeDamage();
+        OnTakeDamage(damage);
     }
 
     public bool TryHit()
@@ -25,8 +29,11 @@ public class UnitBehaviour : MonoBehaviour, IDamagable
         return success;
     }
 
-    private void OnTakeDamage()
+    private void OnTakeDamage(int damage)
     {
         Tween.Color(_unitSprite, Color.red, Color.white, 0.2f);
+        Tween.PunchLocalRotation(_visualsTransform, Vector3.forward * 15f, 0.2f, 10);
+
+        TextManager.Instance.CreateTextAtPosition(damage.ToString(), transform.position + Vector3.up * 1f + Vector3.right * Random.Range(-0.25f, 0.25f));
     }
 }

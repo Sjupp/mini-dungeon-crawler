@@ -75,7 +75,7 @@ public class Hands : MonoBehaviour
         var attackToUse = AttackManager.Instance.GetNextAttack(command);
 
         item.Animator.Play(attackToUse.AnimationName, 0, 0f);
-        _owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse.AttackTimeline.Windup, attackToUse.AttackTimeline.Duration);
+        _owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
     }
 
     private void OnDrawGizmos()

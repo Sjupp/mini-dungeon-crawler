@@ -16,8 +16,8 @@ MonoBehaviour:
   Damage: 5
   AttackTimeline:
     Windup: 0.05
-    Duration: 0.64
+    Duration: 0.2
     Winddown: 0
-  HitboxPosition: {x: 1, y: 0.5, z: 0}
-  HitboxScale: {x: 1, y: 1, z: 1}
+  HitboxPosition: {x: 1, y: 0.25, z: 0}
+  HitboxScale: {x: 1, y: 1.5, z: 1}
   VFX: {fileID: 0}

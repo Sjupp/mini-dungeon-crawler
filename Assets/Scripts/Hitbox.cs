@@ -13,14 +13,17 @@ public class Hitbox : MonoBehaviour
     private bool _paused = true;
 
 
-    public void Activate(float windup, float duration)
+    public void Activate(AttackDataSO attackToUse)
     {
         _timer = 0f;
-        _windupDuration = windup;
-        _activeDuration = duration;
+        _windupDuration = attackToUse.AttackTimeline.Windup;
+        _activeDuration = attackToUse.AttackTimeline.Duration;
 
         _paused = false;
         _windup = true;
+
+        transform.localPosition = attackToUse.HitboxPosition;
+        transform.localScale = attackToUse.HitboxScale;
 
         _hitboxCollider.enabled = false;
     }
@@ -71,6 +74,15 @@ public class Hitbox : MonoBehaviour
             {
                 damagable.TakeDamage(5);
             }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!_paused && !_windup)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(transform.position, transform.localScale);
         }
     }
 }
