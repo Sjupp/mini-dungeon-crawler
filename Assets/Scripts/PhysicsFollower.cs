@@ -2,21 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public enum PlayerState
-{
-    Idle,
-    Moving,
-    Rolling,
-    Something,
-}
-
-public enum MovementState
-{
-    Free,
-    Slowed,
-    Anchored
-}
-
 public class PhysicsFollower : MonoBehaviour
 {
     public Action<bool> ChangedDirection = null;

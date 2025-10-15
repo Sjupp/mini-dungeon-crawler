@@ -1,5 +1,4 @@
 using PrimeTween;
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -78,6 +77,7 @@ public class Hands : MonoBehaviour
 
         var attackToUse = AttackManager.Instance.GetNextAttack(command);
 
+        var hej = attackToUse.AttackTimeline.Total;
 
         //_owner.Animator.Play("Player_StepForward", 1, 0f);
         //Tween.Position(transform, transform.position + transform.right * 0.3f, 0.2f);
@@ -150,7 +150,7 @@ public class Hands : MonoBehaviour
     private void CreateVFX(AttackDataSO attackToUse)
     {
         var vfx = Instantiate(attackToUse.VFX, _owner.transform);
-        vfx.transform.SetLocalPositionAndRotation(attackToUse.VFXPosition, Quaternion.Euler(0f, _owner.transform.rotation.eulerAngles.y, attackToUse.VFXRotationZ));
+        vfx.transform.SetLocalPositionAndRotation(attackToUse.VFXPosition, Quaternion.Euler(0f, 0f, attackToUse.VFXRotationZ));
         if (attackToUse.VFXScale != Vector3.one)
         {
             vfx.transform.localScale = attackToUse.VFXScale; // scaling pixel art vfx usually looks bad

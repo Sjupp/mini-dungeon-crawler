@@ -30,4 +30,6 @@ public struct AttackTimeline
     public float Windup;
     public float Duration;
     public float Winddown;
+
+    public readonly float Total => Windup + Duration + Winddown;
 }

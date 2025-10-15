@@ -20,4 +20,8 @@ MonoBehaviour:
     Winddown: 0
   HitboxPosition: {x: 1, y: 0.5, z: 0}
   HitboxScale: {x: 1, y: 1, z: 1}
-  VFX: {fileID: 0}
+  VFX: {fileID: 7359424956888820664, guid: acca3addcc5a28d4ebb3f2ab1cb080e1, type: 3}
+  VFXPosition: {x: 1.2, y: 0.38, z: 0}
+  VFXScale: {x: 2, y: -2, z: 2}
+  VFXRotationZ: 0
+  VFXStartDelay: 0
