@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 441c845fc1962af4f8b691249db29359, type: 3}
-  m_Name: TripleSword
+  m_Name: SwordShieldShield
   m_EditorClassIdentifier: Assembly-CSharp::AttackSequenceSO
   CommandSequence:
   - WeaponCommand:
@@ -19,12 +19,12 @@ MonoBehaviour:
       Timestamp: 0
     AttackData: {fileID: 11400000, guid: 5cf6135dd1710394ba2c6a2b0fcfaf2a, type: 2}
   - WeaponCommand:
-      WeaponType: 1
+      WeaponType: 2
       InputType: 0
       Timestamp: 0
-    AttackData: {fileID: 11400000, guid: cf61f8395c0fb6a448b355501cb94660, type: 2}
+    AttackData: {fileID: 11400000, guid: 7159185702ec171489531f91b1eaa04d, type: 2}
   - WeaponCommand:
-      WeaponType: 1
+      WeaponType: 2
       InputType: 0
       Timestamp: 0
-    AttackData: {fileID: 11400000, guid: ed3a30f2145e70c41beb30bba8753920, type: 2}
+    AttackData: {fileID: 11400000, guid: fee96b82dea7f144eb49ccf89793ae91, type: 2}

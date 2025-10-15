@@ -10,6 +10,13 @@ public enum PlayerState
     Something,
 }
 
+public enum MovementState
+{
+    Free,
+    Slowed,
+    Anchored
+}
+
 public class PhysicsFollower : MonoBehaviour
 {
     public Action<bool> ChangedDirection = null;
@@ -35,6 +42,9 @@ public class PhysicsFollower : MonoBehaviour
     private bool _facingRight = true;
     private Vector2 _inputVector = Vector2.zero;
 
+    private MovementState _movementState = MovementState.Free;
+
+    public Animator Animator => _animator;
 
     private void Awake()
     {
@@ -59,13 +69,19 @@ public class PhysicsFollower : MonoBehaviour
             MouseInput();
         }
 
-        if (_targetVector.sqrMagnitude > 0)
+
+        if (_movementState is MovementState.Free or MovementState.Slowed)
         {
-            _movementVector = Vector3.Lerp(_movementVector, _targetVector * _moveSpeed, _accelerationSharpness * Time.deltaTime);
-        }
-        else
-        {
-            _movementVector = Vector3.Lerp(_movementVector, _targetVector, _decelerationSharpness * Time.deltaTime);
+            float movementSpeed = _movementState == MovementState.Free ? _moveSpeed : _moveSpeed * 0.3f;
+
+            if (_targetVector.sqrMagnitude > 0)
+            {
+                _movementVector = Vector3.Lerp(_movementVector, _targetVector * _moveSpeed, _accelerationSharpness * Time.deltaTime);
+            }
+            else
+            {
+                _movementVector = Vector3.Lerp(_movementVector, _targetVector, _decelerationSharpness * Time.deltaTime);
+            }
         }
 
         if (_movementVector.x > 0)

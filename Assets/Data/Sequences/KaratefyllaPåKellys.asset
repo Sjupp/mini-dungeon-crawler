@@ -24,11 +24,6 @@ MonoBehaviour:
       Timestamp: 0
     AttackData: {fileID: 11400000, guid: cf61f8395c0fb6a448b355501cb94660, type: 2}
   - WeaponCommand:
-      WeaponType: 1
-      InputType: 0
-      Timestamp: 0
-    AttackData: {fileID: 11400000, guid: a122fe1dc8e5a204a98ffcfbef0a02da, type: 2}
-  - WeaponCommand:
       WeaponType: 2
       InputType: 0
       Timestamp: 0

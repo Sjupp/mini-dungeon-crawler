@@ -10,18 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab8076bd3a2b2ba429d1261eef7baa8f, type: 3}
-  m_Name: Sword_1
+  m_Name: Shield_Retreat
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
-  AnimationName: Sword_Slash
+  AnimationName: Shield_Bash
   Damage: 5
   AttackTimeline:
-    Windup: 0.05
+    Windup: 0.2
     Duration: 0.2
     Winddown: 0
-  HitboxPosition: {x: 1, y: 0.3, z: 0}
-  HitboxScale: {x: 1, y: 1.5, z: 1}
-  VFX: {fileID: 7359424956888820664, guid: acca3addcc5a28d4ebb3f2ab1cb080e1, type: 3}
-  VFXPosition: {x: 1.2, y: 0.38, z: 0}
-  VFXScale: {x: 2, y: 2, z: 2}
-  VFXRotation: {x: 0, y: 0, z: 0}
-  VFXStartDelay: 0
+  HitboxPosition: {x: 1, y: 0.5, z: 0}
+  HitboxScale: {x: 1, y: 1, z: 1}
+  VFX: {fileID: 0}
