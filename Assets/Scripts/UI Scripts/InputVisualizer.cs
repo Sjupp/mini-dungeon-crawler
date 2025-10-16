@@ -20,10 +20,30 @@ public class InputVisualizer : MonoBehaviour
     private List<InputElement> _activeElements = new();
     private List<SequenceNotice> _activeSequences = new();
 
+    private float _timer = 0f;
+    private float _timeout = 3f;
+
     private void Start()
     {
         AttackManager.Instance.Attack -= OnAttack;
         AttackManager.Instance.Attack += OnAttack;
+    }
+
+    private void Update()
+    {
+        if (_timer > 0f)
+        {
+            _timer -= Time.deltaTime;
+
+            if (_timer <= 0f)
+            {
+                foreach (var item in _activeElements)
+                {
+                    item.FadeOut(0.3f);
+                }
+                _activeElements.Clear();
+            }
+        }
     }
 
     private void OnAttack(WeaponCommand inputType, AttackDataSO attackData, int commandHistoryCount, List<AttackSequenceSO> finishedSequences)
@@ -61,6 +81,8 @@ public class InputVisualizer : MonoBehaviour
 
     private void UpdateCommandFeed(WeaponCommand inputType, AttackDataSO attackData)
     {
+        _timer = _timeout;
+
         if (_activeElements.Count < _maxElements)
         {
             var createdElement = Instantiate(_elementPrefab,

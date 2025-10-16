@@ -25,4 +25,9 @@ public class InputElement : MonoBehaviour
         Tween.Alpha(_canvasGroup, _fadeSettings);
         Tween.PunchLocalPosition(transform, _shakeSettings);
     }
+
+    public void FadeOut(float duration)
+    {
+        Tween.Alpha(_canvasGroup, 0f, duration);
+    }
 }
