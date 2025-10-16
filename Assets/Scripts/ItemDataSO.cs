@@ -9,10 +9,4 @@ public class ItemDataSO : ScriptableObject
     public string IdleAnimationName;
 
     public Sprite Sprite;
-
-    // animation controlled now??
-    [Space]
-    public bool FlipX;
-    public Vector3 Offset;
-    public float Rotation;
 }

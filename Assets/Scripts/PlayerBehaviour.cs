@@ -1,5 +1,6 @@
 using PrimeTween;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,45 +13,46 @@ public enum MovementState
 
 public class PlayerBehaviour : MonoBehaviour
 {
-    // PhysicsFollower
+    [Header("Debug / Temp")]
+    [SerializeField]
+    private AnimatedProgressElement _progressIndicator = null;
+    [SerializeField]
+    private ParticleSystem _vfxCloud = null;
+
+    [Header("Refs")]
+    [SerializeField]
+    private Transform _body = null;
+
+    [Header("Settings")]
     [SerializeField]
     private float _moveSpeed = 0f;
     [SerializeField]
     private float _accelerationSharpness = 1f;
     [SerializeField]
     private float _decelerationSharpness = 1f;
-    private Rigidbody2D _rb = null;
-
-    Vector3 _movementVector = Vector3.zero;
-    Vector3 _targetVector = Vector3.zero;
-
-    private InputAction _moveAction;
-    private InputAction _jumpAction;
-
-    [SerializeField]
-    private Animator _animator = null;
-    private int _playerVelocityStringHash = -1;
-
-    private bool _facingRight = true;
-    private Vector2 _inputVector = Vector2.zero;
-
-    private MovementState _movementState = MovementState.Free;
-    public Animator Animator => _animator;
-
-    // Hands
-    private Item _heldItemMain = null;
-    private Item _heldItemOff = null;
-
-    [SerializeField]
-    private Transform _body = null;
-
     [SerializeField]
     private Vector3 _offset = Vector3.zero;
     [SerializeField]
     private Vector3 _offset1 = Vector3.zero;
+    
+    private InputAction _moveAction;
+    private InputAction _jumpAction;
+    private Vector2 _inputVector = Vector2.zero;
+    private Vector3 _movementVector = Vector3.zero;
+    private Vector3 _targetVector = Vector3.zero;
+    
+    private Item _heldItemMain = null;
+    private Item _heldItemOff = null;
 
-    [SerializeField]
-    private ParticleSystem _vfxCloud = null;
+    private Rigidbody2D _rb = null;
+    private Animator _animator = null;
+
+    private bool _facingRight = true;
+    private MovementState _movementState = MovementState.Free;
+    private float _lastAttackTimestamp = 0f;
+    private float _nextAvailableTimestamp = 0f;
+    private float _inputBufferThreshold = 0.2f;
+    private Queue<WeaponCommand> _inputBuffer = new();
 
     private void Awake()
     {
@@ -74,11 +76,11 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (true)
         {
-            KeyboardInput();
+            KeyboardMovementInput();
         }
         else
         {
-            MouseInput();
+            MouseMovementInput();
         }
 
 
@@ -124,34 +126,82 @@ public class PlayerBehaviour : MonoBehaviour
             _heldItemOff.transform.position = _body.position + _body.right * _offset1.x + _body.up * _offset1.y;
         }
 
+        HandleAttackInputs();
+
+        HandleInputAvailabilityVisualizer();
+    }
+
+    private void FixedUpdate()
+    {
+        _rb.linearVelocity = _movementVector;
+    }
+
+    private void HandleAttackInputs()
+    {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            if (_heldItemMain != null)
-            {
-                Attack(_heldItemMain, InputType.Tap);
-            }
+            HandleInput(true, InputType.Tap);
         }
 
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            if (_heldItemOff != null)
+            HandleInput(false, InputType.Tap);
+        }
+
+        if (Time.time > _nextAvailableTimestamp)
+        {
+            if (_inputBuffer.Count > 0)
             {
-                Attack(_heldItemOff, InputType.Tap);
+                // Do I even need a queue if I ever just use the first one??
+                // What if I need quarter circle shoryuken inputs!?!?
+                var command = _inputBuffer.Dequeue();
+                _inputBuffer.Clear();
+
+                var attackToUse = AttackManager.Instance.GetNextAttack(command);
+
+                ExecuteAttack(attackToUse, _heldItemMain);
             }
+        }
+
+        // ToDo: proper input actions, held input variants
+    }
+
+    private void HandleInput(bool mainHand , InputType inputType)
+    {
+        if (Time.time > _nextAvailableTimestamp - _inputBufferThreshold)
+        {
+            _inputBuffer.Enqueue(CreateWeaponCommand(mainHand, inputType));
         }
     }
 
-    private void Attack(Item item, InputType inputType)
+    private WeaponCommand CreateWeaponCommand(bool mainHand, InputType inputType = InputType.Tap)
     {
-        WeaponCommand command = new WeaponCommand(
-            item.ItemData.WeaponType,
-            inputType,
-            Time.time
-            );
+        var weaponType = WeaponType.Any;
+        if (mainHand && _heldItemMain != null)
+        {
+            weaponType = _heldItemMain.ItemData.WeaponType;
+        }
+        else if (!mainHand && _heldItemOff != null)
+        {
+            weaponType = _heldItemMain.ItemData.WeaponType;
+        }
+        else
+        {
+            Debug.LogError("No item held in hand");
+            return null;
+        }
 
-        var attackToUse = AttackManager.Instance.GetNextAttack(command);
+        return new WeaponCommand(
+                weaponType,
+                inputType,
+                Time.time
+                );
+    }
 
-        var hej = attackToUse.AttackTimeline.Total;
+    private void ExecuteAttack(AttackDataSO attackToUse, Item temporaryParameter)
+    {
+        _lastAttackTimestamp = Time.time;
+        _nextAvailableTimestamp = Time.time + attackToUse.AttackTimeline.Total;
 
         //_owner.Animator.Play("Player_StepForward", 1, 0f);
         //Tween.Position(transform, transform.position + transform.right * 0.3f, 0.2f);
@@ -169,7 +219,7 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 _animator.Play("Player_StepForward", 1, 0f);
                 Tween.Position(transform, transform.position + transform.right * 0.5f, 0.2f);
-                item.Animator.Play(attackToUse.AnimationName, 0, 0f);
+                temporaryParameter.Animator.Play(attackToUse.AnimationName, 0, 0f);
             });
 
             _animator.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
@@ -181,7 +231,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
         else if (attackToUse.name == "Shield_Retreat")
         {
-            item.Animator.Play(attackToUse.AnimationName, 0, 0f);
+            temporaryParameter.Animator.Play(attackToUse.AnimationName, 0, 0f);
             _animator.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
 
             Tween.Delay(0.2f).OnComplete(() =>
@@ -197,7 +247,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
         else if (attackToUse.name == "Shield_Uppercut")
         {
-            item.Animator.Play(attackToUse.AnimationName, 0, 0f);
+            temporaryParameter.Animator.Play(attackToUse.AnimationName, 0, 0f);
             _animator.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
             _animator.Play("Player_JumpLow", 1, 0f);
 
@@ -211,7 +261,7 @@ public class PlayerBehaviour : MonoBehaviour
             _animator.Play("Player_StepForward", 1, 0f);
             Tween.Position(transform, transform.position + transform.right * 0.3f, 0.2f);
 
-            item.Animator.Play(attackToUse.AnimationName, 0, 0f);
+            temporaryParameter.Animator.Play(attackToUse.AnimationName, 0, 0f);
             _animator.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
 
             if (attackToUse.VFX != null)
@@ -247,7 +297,7 @@ public class PlayerBehaviour : MonoBehaviour
             _heldItemOff.transform.localRotation = Quaternion.Euler(0f, facingRight ? 0f : 180f, 0f);
     }
 
-    private void KeyboardInput()
+    private void KeyboardMovementInput()
     {
         _inputVector = _moveAction.ReadValue<Vector2>();
 
@@ -263,7 +313,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    private void MouseInput()
+    private void MouseMovementInput()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
@@ -283,9 +333,23 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    private void HandleInputAvailabilityVisualizer()
     {
-        _rb.linearVelocity = _movementVector;
+        if (Time.time > _nextAvailableTimestamp)
+        {
+            _progressIndicator.SetElementColor(Color.green);
+        }
+        else if (Time.time > _nextAvailableTimestamp - _inputBufferThreshold)
+        {
+            _progressIndicator.SetElementColor(Color.yellow);
+        }
+        else
+        {
+            _progressIndicator.SetElementColor(Color.red);
+        }
+
+        if (_nextAvailableTimestamp > 0)
+            _progressIndicator.UpdateElement(Time.time - _lastAttackTimestamp, _nextAvailableTimestamp - _lastAttackTimestamp);
     }
 
     private void OnDrawGizmos()

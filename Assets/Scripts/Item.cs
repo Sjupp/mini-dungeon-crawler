@@ -19,29 +19,6 @@ public class Item : MonoBehaviour
         _spriteRenderer.sprite = itemData.Sprite;
         _animator.Play(itemData.IdleAnimationName);
         gameObject.name = "item_" + itemData.ItemName;
-     
-        // probably obsolete
-        _spriteRenderer.flipX = itemData.FlipX;
-        _spriteRenderer.sortingOrder = 3;
-        _spriteRenderer.transform.SetLocalPositionAndRotation(itemData.Offset, Quaternion.Euler(0f, 0f, itemData.Rotation));
-    }
-
-    public void UseItem(InputType inputType)
-    {
-        WeaponCommand command = new WeaponCommand(
-            _itemData.WeaponType,
-            inputType,
-            Time.time
-            );
-
-        var attackToUse = AttackManager.Instance.GetNextAttack(command);
-
-        ExecuteAttack(attackToUse);
-    }
-
-    private void ExecuteAttack(AttackDataSO attack)
-    {
-        _animator.Play(attack.AnimationName, 0, 0f);
     }
 }
 

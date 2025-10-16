@@ -17,7 +17,7 @@ public class AttackManager : MonoBehaviour
     private AttackDataSO _defaultShieldAttack = null;
     [Space]
     [SerializeField]
-    private bool _useTimeout = true;
+    private bool _ignoreTimeout = false;
     [SerializeField]
     private float _comboTimeout = 0.5f;
     private List<WeaponCommand> _commandHistory = new();
@@ -38,7 +38,7 @@ public class AttackManager : MonoBehaviour
     {
         AttackDataSO resultingAttack = null;
 
-        if (_useTimeout)
+        if (!_ignoreTimeout)
         {
             if(_commandHistory.Count > 0 && Time.time - _commandHistory.Last().Timestamp > _comboTimeout)
             {
