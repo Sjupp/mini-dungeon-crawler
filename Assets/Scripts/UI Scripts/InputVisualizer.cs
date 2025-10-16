@@ -20,8 +20,9 @@ public class InputVisualizer : MonoBehaviour
     private List<InputElement> _activeElements = new();
     private List<SequenceNotice> _activeSequences = new();
 
+    [SerializeField]
+    private float _inactivityThreshold = 3f;
     private float _timer = 0f;
-    private float _timeout = 3f;
 
     private void Start()
     {
@@ -81,7 +82,7 @@ public class InputVisualizer : MonoBehaviour
 
     private void UpdateCommandFeed(WeaponCommand inputType, AttackDataSO attackData)
     {
-        _timer = _timeout;
+        _timer = _inactivityThreshold;
 
         if (_activeElements.Count < _maxElements)
         {
