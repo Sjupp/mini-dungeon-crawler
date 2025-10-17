@@ -9,6 +9,7 @@ public class ModularAttackEditor : EditorWindow
     private AttackDataSO attackData;
     private Vector2 scrollPos;
 
+    private float newDurationOverride;
     private const float TimelineHorizontalPadding = 20f;
     private const float BaseRowHeight = 28f;
     private const float ExtraHeightPerBlock = 12f;
@@ -42,9 +43,21 @@ public class ModularAttackEditor : EditorWindow
 
         EditorGUILayout.Space(10);
 
-        Undo.RecordObject(attackData, "Change Total Duration Override");
-        attackData.TotalDurationOverride = EditorGUILayout.FloatField("Total Duration Override", attackData.TotalDurationOverride);
-        EditorUtility.SetDirty(attackData);
+        // Show TotalDurationOverride as read-only
+        EditorGUI.BeginDisabledGroup(true);
+        EditorGUILayout.FloatField("Total Duration Override", attackData.TotalDurationOverride);
+        EditorGUI.EndDisabledGroup();
+
+        // Temporary field to input new value
+        newDurationOverride = EditorGUILayout.FloatField("New Duration Override", newDurationOverride);
+
+        // Apply button
+        if (GUILayout.Button("Set Total Duration Override"))
+        {
+            Undo.RecordObject(attackData, "Change Total Duration Override");
+            attackData.TotalDurationOverride = newDurationOverride;
+            EditorUtility.SetDirty(attackData);
+        }
 
         EditorGUILayout.EndVertical();
         EditorGUILayout.Space(10);

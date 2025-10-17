@@ -28,3 +28,30 @@ MonoBehaviour:
   VFXScale: {x: 2, y: 2, z: 2}
   VFXRotationZ: 0
   VFXStartDelay: 0
+  Blocks:
+  - rid: 7272313239740350537
+  - rid: 7272313239740350538
+  - rid: 7272313239740350539
+  TotalDurationOverride: 0.25
+  references:
+    version: 2
+    RefIds:
+    - rid: 7272313239740350537
+      type: {class: AnimationBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0
+        AnimationType: 0
+        AnimationClip: {fileID: 7400000, guid: a27f59d69dd4b834cab1ba149dbff0e2, type: 2}
+    - rid: 7272313239740350538
+      type: {class: AnimationBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0
+        AnimationType: 1
+        AnimationClip: {fileID: 7400000, guid: 55d6bfa59980040469a295e2d9d7389a, type: 2}
+    - rid: 7272313239740350539
+      type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0.05
+        Position: {x: 1, y: 0.3, z: 0}
+        Scale: {x: 1, y: 1.5, z: 1}
+        _duration: 0.2
