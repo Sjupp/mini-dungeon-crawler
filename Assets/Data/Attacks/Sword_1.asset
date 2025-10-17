@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab8076bd3a2b2ba429d1261eef7baa8f, type: 3}
   m_Name: Sword_1
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
-  AnimationName: Sword_Slash
   Damage: 5
+  MovementState: 1
+  AnimationName: Sword_Slash
+  MovementShift: {x: 0, y: 0, z: 0}
+  ShiftDuration: 0
   AttackTimeline:
     Windup: 0.05
     Duration: 0.2

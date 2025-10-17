@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
   AnimationName: Sword_Slash1
   Damage: 5
+  MovementState: 1
   AttackTimeline:
     Windup: 0.1
     Duration: 0.2
@@ -23,5 +24,5 @@ MonoBehaviour:
   VFX: {fileID: 7359424956888820664, guid: acca3addcc5a28d4ebb3f2ab1cb080e1, type: 3}
   VFXPosition: {x: 1.2, y: 0.38, z: 0}
   VFXScale: {x: 2, y: -2, z: 2}
-  VFXRotation: {x: 0, y: 0, z: 0}
+  VFXRotationZ: 0
   VFXStartDelay: 0

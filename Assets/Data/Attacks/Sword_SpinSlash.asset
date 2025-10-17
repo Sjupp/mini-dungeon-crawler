@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab8076bd3a2b2ba429d1261eef7baa8f, type: 3}
   m_Name: Sword_SpinSlash
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
-  AnimationName: Sword_SpinSlash
   Damage: 5
+  MovementState: 0
+  AnimationName: Sword_SpinSlash
+  MovementShift: {x: 0, y: 0, z: 0}
+  ShiftDuration: 0
   AttackTimeline:
     Windup: 0.6
     Duration: 0.2
@@ -21,3 +24,11 @@ MonoBehaviour:
   HitboxPosition: {x: 1, y: 0.5, z: 0}
   HitboxScale: {x: 1, y: 1, z: 1}
   VFX: {fileID: 0}
+  VFXPosition: {x: 0, y: 0, z: 0}
+  VFXScale: {x: 1, y: 1, z: 1}
+  VFXRotationZ: 0
+  VFXStartDelay: 0
+  Blocks: []
+  references:
+    version: 2
+    RefIds: []

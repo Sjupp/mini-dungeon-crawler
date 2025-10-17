@@ -1,6 +1,6 @@
 using PrimeTween;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,6 +22,8 @@ public class PlayerBehaviour : MonoBehaviour
     [Header("Refs")]
     [SerializeField]
     private Transform _body = null;
+    [SerializeField]
+    private Hitbox _hitBox = null;
 
     [Header("Settings")]
     [SerializeField]
@@ -40,7 +42,8 @@ public class PlayerBehaviour : MonoBehaviour
     private Vector2 _inputVector = Vector2.zero;
     private Vector3 _movementVector = Vector3.zero;
     private Vector3 _targetVector = Vector3.zero;
-    
+    private Vector3 _shiftVector = Vector3.zero;
+
     private Item _heldItemMain = null;
     private Item _heldItemOff = null;
 
@@ -49,10 +52,16 @@ public class PlayerBehaviour : MonoBehaviour
 
     private bool _facingRight = true;
     private MovementState _movementState = MovementState.Free;
-    private float _lastAttackTimestamp = 0f;
+
+    private float _latestAttackTimestamp = 0f;
     private float _nextAvailableTimestamp = 0f;
+    private float _shiftComplete = 0f;
+
     private float _inputBufferThreshold = 0.2f;
     private Queue<WeaponCommand> _inputBuffer = new();
+    private AttackDataSO _currentAttack = null;
+    private List<AttackBlock> _pendingBlocks = new();
+    private List<AttackBlock> _activeBlocks = new();
 
     private void Awake()
     {
@@ -90,12 +99,17 @@ public class PlayerBehaviour : MonoBehaviour
 
             if (_targetVector.sqrMagnitude > 0)
             {
-                _movementVector = Vector3.Lerp(_movementVector, _targetVector * _moveSpeed, _accelerationSharpness * Time.deltaTime);
+                _movementVector = Vector3.Lerp(_movementVector, _targetVector * movementSpeed, _accelerationSharpness * Time.deltaTime);
             }
             else
             {
                 _movementVector = Vector3.Lerp(_movementVector, _targetVector, _decelerationSharpness * Time.deltaTime);
             }
+        }
+
+        if (Time.time > _shiftComplete)
+        {
+            _shiftVector = Vector3.zero;
         }
 
         if (_movementVector.x > 0)
@@ -117,23 +131,27 @@ public class PlayerBehaviour : MonoBehaviour
         }
 
         if (_heldItemMain != null)
-        {
             _heldItemMain.transform.position = _body.position + _body.right * _offset.x + _body.up * _offset.y;
-        }
 
         if (_heldItemOff != null)
-        {
             _heldItemOff.transform.position = _body.position + _body.right * _offset1.x + _body.up * _offset1.y;
-        }
 
         HandleAttackInputs();
+
+        HandleAttacking();
 
         HandleInputAvailabilityVisualizer();
     }
 
     private void FixedUpdate()
     {
-        _rb.linearVelocity = _movementVector;
+        _rb.linearVelocity = _movementVector + _shiftVector;
+    }
+
+    private void SetShiftOverTime(Vector3 relativeOffset, float time)
+    {
+        _shiftComplete = Time.time + time;
+        _shiftVector = new Vector3(transform.right.x * relativeOffset.x / time, relativeOffset.y / time, 0f);
     }
 
     private void HandleAttackInputs()
@@ -150,6 +168,8 @@ public class PlayerBehaviour : MonoBehaviour
 
         if (Time.time > _nextAvailableTimestamp)
         {
+            AttackComplete(); // basically
+
             if (_inputBuffer.Count > 0)
             {
                 // Do I even need a queue if I ever just use the first one??
@@ -164,6 +184,37 @@ public class PlayerBehaviour : MonoBehaviour
         }
 
         // ToDo: proper input actions, held input variants
+    }
+
+    private void AttackComplete()
+    {
+        SetMovementState(MovementState.Free);
+    }
+
+    private void AttackStart(AttackDataSO attack)
+    {
+
+    }
+
+    private void SetMovementState(MovementState movementState)
+    {
+        switch (movementState)
+        {
+            case MovementState.Free:
+                _movementState = movementState;
+                break;
+            case MovementState.Slowed:
+                _movementState = movementState;
+                break;
+            case MovementState.Anchored:
+                _movementState = movementState;
+
+                _movementVector = Vector3.zero;
+                _targetVector = Vector3.zero;
+                break;
+            default:
+                break;
+        }
     }
 
     private void HandleInput(bool mainHand , InputType inputType)
@@ -198,91 +249,110 @@ public class PlayerBehaviour : MonoBehaviour
                 );
     }
 
-    private void ExecuteAttack(AttackDataSO attackToUse, Item temporaryParameter)
+    private void HandleAttacking()
     {
-        _lastAttackTimestamp = Time.time;
-        _nextAvailableTimestamp = Time.time + attackToUse.AttackTimeline.Total;
+        if (_currentAttack == null)
+            return;
 
-        //_owner.Animator.Play("Player_StepForward", 1, 0f);
-        //Tween.Position(transform, transform.position + transform.right * 0.3f, 0.2f);
-        //var cloud = Instantiate(_vfxCloud, _owner.transform);
-        //cloud.transform.localPosition = Vector3.right * 0.3f;
-        //var asd = cloud.main;
-        //asd.startDelay = 0.1f;
-        //cloud.Play();
+        float elapsed = Time.time - _latestAttackTimestamp;
 
-        if (attackToUse.name == "Sword_StabSlow")
+        // Trigger blocks when start time reached
+        for (int i = _pendingBlocks.Count - 1; i >= 0; i--)
         {
-            _animator.Play("Player_Windup", 1, 0f);
-
-            Tween.Delay(0.5f).OnComplete(() =>
+            var block = _pendingBlocks[i];
+            if (elapsed >= block.StartTime)
             {
-                _animator.Play("Player_StepForward", 1, 0f);
-                Tween.Position(transform, transform.position + transform.right * 0.5f, 0.2f);
-                temporaryParameter.Animator.Play(attackToUse.AnimationName, 0, 0f);
-            });
-
-            _animator.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
-
-            if (attackToUse.VFX != null)
-            {
-                CreateVFX(attackToUse);
+                TriggerBlock(block);
+                _activeBlocks.Add(block);
+                _pendingBlocks.RemoveAt(i);
             }
         }
-        else if (attackToUse.name == "Shield_Retreat")
+
+        // Handle block durations (e.g., disabling hitboxes)
+        for (int i = _activeBlocks.Count - 1; i >= 0; i--)
         {
-            temporaryParameter.Animator.Play(attackToUse.AnimationName, 0, 0f);
-            _animator.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
-
-            Tween.Delay(0.2f).OnComplete(() =>
+            var block = _activeBlocks[i];
+            if (elapsed >= block.StartTime + block.Duration)
             {
-                _animator.Play("Player_JumpLow", 1, 0f);
-                Tween.Position(transform, transform.position + transform.right * -1f, 0.3f);
-            });
-
-            if (attackToUse.VFX != null)
-            {
-                CreateVFX(attackToUse);
+                EndBlock(block);
+                _activeBlocks.RemoveAt(i);
             }
         }
-        else if (attackToUse.name == "Shield_Uppercut")
+
+        // Optionally clear _currentAttack once all blocks finished
+        if (_pendingBlocks.Count == 0 && _activeBlocks.Count == 0)
         {
-            temporaryParameter.Animator.Play(attackToUse.AnimationName, 0, 0f);
-            _animator.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
-            _animator.Play("Player_JumpLow", 1, 0f);
-
-            if (attackToUse.VFX != null)
-            {
-                CreateVFX(attackToUse);
-            }
-        }
-        else
-        {
-            _animator.Play("Player_StepForward", 1, 0f);
-            Tween.Position(transform, transform.position + transform.right * 0.3f, 0.2f);
-
-            temporaryParameter.Animator.Play(attackToUse.AnimationName, 0, 0f);
-            _animator.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
-
-            if (attackToUse.VFX != null)
-            {
-                CreateVFX(attackToUse);
-            }
+            _currentAttack = null;
         }
     }
 
-    private void CreateVFX(AttackDataSO attackToUse)
+    private void ExecuteAttack(AttackDataSO attackToUse, Item temporaryParameter)
     {
-        var vfx = Instantiate(attackToUse.VFX, transform);
-        vfx.transform.SetLocalPositionAndRotation(attackToUse.VFXPosition, Quaternion.Euler(0f, 0f, attackToUse.VFXRotationZ));
-        if (attackToUse.VFXScale != Vector3.one)
+        SetMovementState(attackToUse.MovementState);
+        
+        _latestAttackTimestamp = Time.time;
+        _nextAvailableTimestamp = Time.time + attackToUse.AttackTimeline.Total;
+
+        _currentAttack = attackToUse;
+        _pendingBlocks = new List<AttackBlock>(attackToUse.Blocks.OrderBy(b => b.StartTime));
+        _activeBlocks = new List<AttackBlock>();
+    }
+
+    private void TriggerBlock(AttackBlock block)
+    {
+        switch (block)
         {
-            vfx.transform.localScale = attackToUse.VFXScale; // scaling pixel art vfx usually looks bad
+            case AnimationBlock anim:
+                Debug.Log("Playing animation " + anim.AnimationClip.name);
+                if (anim.AnimationType == AnimationType.PlayerAnimation)
+                    _animator.Play(anim.AnimationClip.name, 1, 0f);
+                else
+                    _heldItemMain.Animator.Play(anim.AnimationClip.name);
+                break;
+            case HitboxBlock hitbox:
+                Debug.Log("Activating hitbox");
+                _hitBox.Activate(hitbox);
+                break;
+            case VFXBlock vfx:
+                Debug.Log("Creating vfx " + vfx.VFX.gameObject.name);
+                CreateVFX(vfx);
+                break;
+            case ShiftBlock shift:
+                SetShiftOverTime(shift.PositionRelative, shift.Duration);
+                break;
         }
-        if (attackToUse.VFXStartDelay != 0f)
+    }
+
+    private void EndBlock(AttackBlock block)
+    {
+        if (block is HitboxBlock hitbox)
+        {
+            Debug.Log("Canceling hitbox");
+            _hitBox.Cancel();
+        }
+        else if (block is VFXBlock vfx)
+        {
+            //DestroyVFX(vfx);
+        }
+        else if (block is ShiftBlock shift)
+        {
+            _shiftComplete = Time.time;
+            _shiftVector = Vector3.zero;
+        }
+    }
+
+    private void CreateVFX(VFXBlock vfxBlock)
+    {
+        var vfx = Instantiate(vfxBlock.VFX, transform);
+        vfx.transform.SetLocalPositionAndRotation(vfxBlock.VFXPosition, Quaternion.Euler(0f, 0f, vfxBlock.VFXRotationZ));
+        if (vfxBlock.VFXScale != Vector3.one)
+        {
+            vfx.transform.localScale = vfxBlock.VFXScale; // scaling pixel art vfx usually looks bad
+        }
+        if (vfxBlock.StartTime != 0f)
         {
             var variable = vfx.main;
-            variable.startDelay = attackToUse.VFXStartDelay;
+            variable.startDelay = vfxBlock.StartTime;
         }
     }
 
@@ -349,7 +419,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
 
         if (_nextAvailableTimestamp > 0)
-            _progressIndicator.UpdateElement(Time.time - _lastAttackTimestamp, _nextAvailableTimestamp - _lastAttackTimestamp);
+            _progressIndicator.UpdateElement(Time.time - _latestAttackTimestamp, _nextAvailableTimestamp - _latestAttackTimestamp);
     }
 
     private void OnDrawGizmos()

@@ -650,6 +650,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6889415316416045277, guid: 9d8c5641b192e7a4d8bded8c2b09164e, type: 3}
   m_PrefabInstance: {fileID: 1305483121}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &569954850 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6256962616118406038, guid: 9d8c5641b192e7a4d8bded8c2b09164e, type: 3}
+  m_PrefabInstance: {fileID: 1305483121}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e68b22a7c37c3945a86d01a28eba61d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hitbox
 --- !u!1 &663508135
 GameObject:
   m_ObjectHideFlags: 0
@@ -862,8 +873,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerBehaviour
   _progressIndicator: {fileID: 6995970381906807461}
   _vfxCloud: {fileID: 5797196491164618941, guid: fd224a93dfa28074abab4a71db53dfcf, type: 3}
-  _animator: {fileID: 665343130}
   _body: {fileID: 230253663}
+  _hitBox: {fileID: 569954850}
   _moveSpeed: 4
   _accelerationSharpness: 7.5
   _decelerationSharpness: 7.5
@@ -2501,6 +2512,7 @@ MonoBehaviour:
   _maxElements: 3
   _elementPrefab: {fileID: 2636570182082789042, guid: e0d8dcb6894878346808423200ada68b, type: 3}
   _sequenceNoticePrefab: {fileID: 2055524909528580976, guid: 3208d8445a8c5894daae36d97d780591, type: 3}
+  _inactivityThreshold: 3
 --- !u!1001 &1804103376
 PrefabInstance:
   m_ObjectHideFlags: 0

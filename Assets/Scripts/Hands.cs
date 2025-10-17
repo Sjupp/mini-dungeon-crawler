@@ -98,7 +98,7 @@ public class Hands : MonoBehaviour
                 item.Animator.Play(attackToUse.AnimationName, 0, 0f);
             });
 
-            _owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
+            //_owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
 
             if (attackToUse.VFX != null)
             {
@@ -108,7 +108,7 @@ public class Hands : MonoBehaviour
         else if (attackToUse.name == "Shield_Retreat")
         {
             item.Animator.Play(attackToUse.AnimationName, 0, 0f);
-            _owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
+            //_owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
 
             Tween.Delay(0.2f).OnComplete(() =>
             {
@@ -124,7 +124,7 @@ public class Hands : MonoBehaviour
         else if (attackToUse.name == "Shield_Uppercut")
         {
             item.Animator.Play(attackToUse.AnimationName, 0, 0f);
-            _owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
+            //_owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
             _owner.Animator.Play("Player_JumpLow", 1, 0f);
 
             if (attackToUse.VFX != null)
@@ -138,7 +138,7 @@ public class Hands : MonoBehaviour
             Tween.Position(transform, transform.position + transform.right * 0.3f, 0.2f);
 
             item.Animator.Play(attackToUse.AnimationName, 0, 0f);
-            _owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
+            //_owner.transform.GetChild(0).GetComponent<Hitbox>().Activate(attackToUse);
 
             if (attackToUse.VFX != null)
             {

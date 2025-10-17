@@ -5,65 +5,17 @@ public class Hitbox : MonoBehaviour
     [SerializeField]
     private Collider2D _hitboxCollider = null;
 
-    private float _timer = 0;
-    private float _windupDuration = 0;
-    private float _activeDuration = 0;
-
-    private bool _windup = true;
-    private bool _paused = true;
-
-
-    public void Activate(AttackDataSO attackToUse)
+    public void Activate(HitboxBlock hitbox)
     {
-        _timer = 0f;
-        _windupDuration = attackToUse.AttackTimeline.Windup;
-        _activeDuration = attackToUse.AttackTimeline.Duration;
+        transform.localPosition = hitbox.Position;
+        transform.localScale = hitbox.Scale;
 
-        _paused = false;
-        _windup = true;
-
-        transform.localPosition = attackToUse.HitboxPosition;
-        transform.localScale = attackToUse.HitboxScale;
-
-        _hitboxCollider.enabled = false;
+        _hitboxCollider.enabled = true;
     }
 
     public void Cancel()
     {
         _hitboxCollider.enabled = false;
-        _paused = true;
-    }
-
-    private void Update()
-    {
-        if (_paused) return;
-
-        if (_windup)
-        {
-            if (_timer < _windupDuration)
-            {
-                _timer += Time.deltaTime;
-                if (_timer >= _windupDuration)
-                {
-                    _hitboxCollider.enabled = true;
-                    _timer = 0;
-                    _windup = false;
-                }
-            }
-        }
-        else
-        {
-            if (_timer < _activeDuration)
-            {
-                _timer += Time.deltaTime;
-                if (_timer >= _activeDuration)
-                {
-                    _hitboxCollider.enabled = false;
-                    _timer = 0;
-                    _paused = true;
-                }
-            }
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -79,7 +31,7 @@ public class Hitbox : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!_paused && !_windup)
+        if (_hitboxCollider.enabled)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireCube(transform.position, transform.localScale);

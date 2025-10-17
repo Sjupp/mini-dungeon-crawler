@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab8076bd3a2b2ba429d1261eef7baa8f, type: 3}
   m_Name: Sword_StabFast
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
-  AnimationName: Sword_Stab
   Damage: 5
+  MovementState: 0
+  AnimationName: Sword_Stab
+  MovementShift: {x: 0, y: 0, z: 0}
+  ShiftDuration: 0
   AttackTimeline:
     Windup: 0.1
     Duration: 0.2
@@ -23,5 +26,9 @@ MonoBehaviour:
   VFX: {fileID: 2499356402065180590, guid: a440ec7cad31d6d4caae78d22463b7a7, type: 3}
   VFXPosition: {x: 2.1, y: 0.39, z: 0}
   VFXScale: {x: 1, y: 1, z: 1}
-  VFXRotation: {x: 0, y: 0, z: 0}
+  VFXRotationZ: 0
   VFXStartDelay: 0
+  Blocks: []
+  references:
+    version: 2
+    RefIds: []
