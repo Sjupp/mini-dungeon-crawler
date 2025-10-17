@@ -1969,7 +1969,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4911513181710686237, guid: 9d8c5641b192e7a4d8bded8c2b09164e, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4911513181710686237, guid: 9d8c5641b192e7a4d8bded8c2b09164e, type: 3}
       propertyPath: m_IsTrigger
