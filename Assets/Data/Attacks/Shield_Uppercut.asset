@@ -39,7 +39,7 @@ MonoBehaviour:
       type: {class: AnimationBlock, ns: , asm: Assembly-CSharp}
       data:
         StartTime: 0
-        AnimationType: 0
+        AnimationType: 1
         AnimationClip: {fileID: 7400000, guid: f48610b4a71f4cc4b82637d48cf4357f, type: 2}
     - rid: 7272313270983721049
       type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}

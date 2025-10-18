@@ -283,18 +283,15 @@ public class PlayerBehaviour : MonoBehaviour
         switch (block)
         {
             case AnimationBlock anim:
-                Debug.Log("Playing animation " + anim.AnimationClip.name);
                 if (anim.AnimationType == AnimationType.PlayerAnimation)
                     _animator.Play(anim.AnimationClip.name, 1, 0f);
                 else
-                    _currentAttack.UsedItem.Animator.Play(anim.AnimationClip.name);
+                    _currentAttack.UsedItem.Animator.Play(anim.AnimationClip.name, 0, 0f);
                 break;
             case HitboxBlock hitbox:
-                Debug.Log("Activating hitbox");
                 _hitBox.Activate(hitbox);
                 break;
             case VFXBlock vfx:
-                Debug.Log("Creating vfx " + vfx.VFX.gameObject.name);
                 CreateVFX(vfx);
                 break;
             case ShiftBlock shift:
@@ -307,7 +304,6 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (block is HitboxBlock hitbox)
         {
-            Debug.Log("Canceling hitbox");
             _hitBox.Cancel();
         }
         else if (block is VFXBlock vfx)

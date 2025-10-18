@@ -32,6 +32,7 @@ MonoBehaviour:
   - rid: 7272313270983721045
   - rid: 7272313270983721046
   - rid: 7272313270983721047
+  - rid: 7272313270983721059
   TotalDurationOverride: -1
   references:
     version: 2
@@ -40,7 +41,7 @@ MonoBehaviour:
       type: {class: AnimationBlock, ns: , asm: Assembly-CSharp}
       data:
         StartTime: 0
-        AnimationType: 0
+        AnimationType: 1
         AnimationClip: {fileID: 7400000, guid: 53337ca72909ca64b997141f8748245a, type: 2}
     - rid: 7272313270983721046
       type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}
@@ -54,3 +55,9 @@ MonoBehaviour:
       data:
         StartTime: 0.2
         PositionRelative: {x: -3, y: 0, z: 0}
+    - rid: 7272313270983721059
+      type: {class: AnimationBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0.048583664
+        AnimationType: 0
+        AnimationClip: {fileID: 7400000, guid: 0d45b22c1170ad4428e1646c4bf2d5b6, type: 2}
