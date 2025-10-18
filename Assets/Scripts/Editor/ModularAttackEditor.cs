@@ -139,17 +139,20 @@ public class ModularAttackEditor : EditorWindow
             EditorGUILayout.BeginVertical(GUILayout.Width(100));
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("➕ Add New", GUILayout.Height(40)))
+            if (GUILayout.Button("Add New", GUILayout.Height(40)))
             {
                 Undo.RecordObject(attackData, $"Add {blockType.Name}");
                 var newBlock = (AttackBlock)Activator.CreateInstance(blockType);
                 newBlock.StartTime = 0f;
+                newBlock = DefaultValues(newBlock);
                 attackData.Blocks.Add(newBlock);
                 EditorUtility.SetDirty(attackData);
                 GUI.changed = true;
+
+                var asd = new AnimationBlock();
             }
 
-            if (blocksOfType.Count > 0 && GUILayout.Button("⧉ Duplicate Last", GUILayout.Height(40)))
+            if (blocksOfType.Count > 0 && GUILayout.Button("Duplicate Last", GUILayout.Height(40)))
             {
                 var lastBlock = blocksOfType.Last();
                 string json = JsonUtility.ToJson(lastBlock);
@@ -342,68 +345,30 @@ public class ModularAttackEditor : EditorWindow
         }
     }
 
-    private void ShowAddBlockMenu()
+    private AttackBlock DefaultValues(AttackBlock block)
     {
-        var menu = new GenericMenu();
-
-        menu.AddItem(new GUIContent("Animation Block"), false, () =>
+        if (block is AnimationBlock anim)
         {
-            Undo.RecordObject(attackData, "Add Animation Block");
-            attackData.Blocks.Add(new AnimationBlock
-            {
-                AnimationType = AnimationType.PlayerAnimation,
-                StartTime = 0f,
-                AnimationClip = null // assign default if desired
-            });
-        });
-
-        menu.AddItem(new GUIContent("Hitbox Block"), false, () =>
+            // default values
+        }
+        else if (block is HitboxBlock hitbox)
         {
-            Undo.RecordObject(attackData, "Add Hitbox Block");
-            var block = new HitboxBlock
-            {
-                StartTime = 0f,
-                Position = Vector3.zero,
-                Scale = Vector3.one,
-            };
-
-            SerializedObject so = new SerializedObject(attackData);
-            so.Update();
-            attackData.Blocks.Add(block);
-            so.ApplyModifiedProperties();
-        });
-
-        menu.AddItem(new GUIContent("VFX Block"), false, () =>
+            hitbox.Duration = 0.2f;
+            hitbox.Position = new Vector3(1f, 0.5f, 0f);
+            hitbox.Scale = Vector3.one;
+        }
+        else if (block is VFXBlock vfx)
         {
-            Undo.RecordObject(attackData, "Add VFX Block");
-            var block = new VFXBlock
-            {
-                StartTime = 0f,
-                VFXPosition = Vector3.zero,
-                VFXScale = Vector3.one,
-            };
+            vfx.Duration = 0.2f;
 
-            SerializedObject so = new SerializedObject(attackData);
-            so.Update();
-            attackData.Blocks.Add(block);
-            so.ApplyModifiedProperties();
-        });
-        menu.AddItem(new GUIContent("Shift Block"), false, () =>
+        }
+        else if (block is ShiftBlock shift)
         {
-            Undo.RecordObject(attackData, "Add Shift Block");
-            var block = new ShiftBlock
-            {
-                StartTime = 0f,
-                PositionRelative = Vector3.zero,
-            };
+            shift.Duration = 0.2f;
+            shift.PositionRelative = Vector3.right;
+        }
 
-            SerializedObject so = new SerializedObject(attackData);
-            so.Update();
-            attackData.Blocks.Add(block);
-            so.ApplyModifiedProperties();
-        });
-
-        menu.ShowAsContext();
+        return block;
     }
 
     private Color GetColorForType(Type type)

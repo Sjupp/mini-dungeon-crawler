@@ -40,6 +40,10 @@ public class AttackDataSO : ScriptableObject
         }
         else
         {
+            if (Blocks.Count == 0)
+            {
+                Debug.LogError("AttackData contains no blocks");
+            }
             return Mathf.Max(.1f, Blocks.Max(b => b.StartTime + b.Duration));
         }
     }

@@ -40,14 +40,14 @@ public enum InputType
 [System.Serializable]
 public class WeaponCommand
 {
-    //public Item Weapon;
+    public Item Weapon;
     public WeaponType WeaponType;
     public InputType InputType;
     public float Timestamp;
 
     public WeaponCommand(Item weapon, WeaponType weaponType, InputType inputType, float time)
     {
-        //Weapon = weapon;
+        Weapon = weapon;
         WeaponType = weaponType;
         InputType = inputType;
         Timestamp = time;

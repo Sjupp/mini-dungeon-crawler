@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab8076bd3a2b2ba429d1261eef7baa8f, type: 3}
   m_Name: Shield_Uppercut
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
-  AnimationName: Shield_Uppercut
   Damage: 5
+  MovementState: 1
+  AnimationName: Shield_Uppercut
+  MovementShift: {x: 0, y: 0, z: 0}
+  ShiftDuration: 0
   AttackTimeline:
     Windup: 0.15
     Duration: 0.2
@@ -25,3 +28,23 @@ MonoBehaviour:
   VFXScale: {x: 2, y: -2, z: 2}
   VFXRotationZ: 0
   VFXStartDelay: 0
+  Blocks:
+  - rid: 7272313270983721048
+  - rid: 7272313270983721049
+  TotalDurationOverride: 0.4
+  references:
+    version: 2
+    RefIds:
+    - rid: 7272313270983721048
+      type: {class: AnimationBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0
+        AnimationType: 0
+        AnimationClip: {fileID: 7400000, guid: f48610b4a71f4cc4b82637d48cf4357f, type: 2}
+    - rid: 7272313270983721049
+      type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0.15
+        Position: {x: 1, y: 0.5, z: 0}
+        Scale: {x: 1, y: 1, z: 1}
+        _duration: 0.2

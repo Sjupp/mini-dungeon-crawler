@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab8076bd3a2b2ba429d1261eef7baa8f, type: 3}
   m_Name: Shield_Retreat
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
-  AnimationName: Shield_Bash
   Damage: 5
+  MovementState: 0
+  AnimationName: Shield_Bash
+  MovementShift: {x: 0, y: 0, z: 0}
+  ShiftDuration: 0
   AttackTimeline:
     Windup: 0.2
     Duration: 0.2
@@ -21,3 +24,33 @@ MonoBehaviour:
   HitboxPosition: {x: 1, y: 0.5, z: 0}
   HitboxScale: {x: 1, y: 1, z: 1}
   VFX: {fileID: 0}
+  VFXPosition: {x: 0, y: 0, z: 0}
+  VFXScale: {x: 1, y: 1, z: 1}
+  VFXRotationZ: 0
+  VFXStartDelay: 0
+  Blocks:
+  - rid: 7272313270983721045
+  - rid: 7272313270983721046
+  - rid: 7272313270983721047
+  TotalDurationOverride: -1
+  references:
+    version: 2
+    RefIds:
+    - rid: 7272313270983721045
+      type: {class: AnimationBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0
+        AnimationType: 0
+        AnimationClip: {fileID: 7400000, guid: 53337ca72909ca64b997141f8748245a, type: 2}
+    - rid: 7272313270983721046
+      type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0.2
+        Position: {x: 1, y: 0.5, z: 0}
+        Scale: {x: 1, y: 1, z: 1}
+        _duration: 0.2
+    - rid: 7272313270983721047
+      type: {class: ShiftBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0.2
+        PositionRelative: {x: -3, y: 0, z: 0}

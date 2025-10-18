@@ -59,7 +59,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private float _inputBufferThreshold = 0.2f;
     private Queue<WeaponCommand> _inputBuffer = new();
-    private AttackDataSO _currentAttack = null;
+    private AttackDataWrapper _currentAttack = null;
     private List<AttackBlock> _pendingBlocks = new();
     private List<AttackBlock> _activeBlocks = new();
 
@@ -180,40 +180,12 @@ public class PlayerBehaviour : MonoBehaviour
 
                 var attackToUse = AttackManager.Instance.GetNextAttack(command);
 
-                ExecuteAttack(attackToUse, _heldItemMain);
+                SetCurrentAttack(attackToUse, command);
             }
         }
 
         // ToDo: proper input actions, held input variants
     }
-
-    //private void AttackComplete()
-    //{
-    //    SetMovementState(MovementState.Free);
-    //}
-
-    //private void AttackStart(AttackDataSO attack)
-    //{
-
-    //}
-
-    //private void SetMovementState(MovementState movementState)
-    //{
-    //    switch (movementState)
-    //    {
-    //        case MovementState.Free:
-    //            _movementState = movementState;
-    //            break;
-    //        case MovementState.Slowed:
-    //            _movementState = movementState;
-    //            break;
-    //        case MovementState.Anchored:
-    //            _movementState = movementState;
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //}
 
     private void HandleInput(bool mainHand , InputType inputType)
     {
@@ -235,7 +207,7 @@ public class PlayerBehaviour : MonoBehaviour
         else if (!mainHand && _heldItemOff != null)
         {
             weapon = _heldItemOff;
-            weaponType = _heldItemMain.ItemData.WeaponType;
+            weaponType = _heldItemOff.ItemData.WeaponType;
         }
         else
         {
@@ -244,7 +216,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
 
         return new WeaponCommand(
-                null,
+                weapon,
                 weaponType,
                 inputType,
                 Time.time
@@ -288,7 +260,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    private void ExecuteAttack(AttackDataSO attackToUse, Item temporaryParameter)
+    private void SetCurrentAttack(AttackDataSO attackToUse, WeaponCommand command)
     {
         _movementState = attackToUse.MovementState;
         if (_movementState == MovementState.Anchored)
@@ -301,7 +273,7 @@ public class PlayerBehaviour : MonoBehaviour
         _latestAttackTimestamp = Time.time;
         _nextAvailableTimestamp = Time.time + attackToUse.GetTotalDuration();
 
-        _currentAttack = attackToUse;
+        _currentAttack = new AttackDataWrapper(attackToUse, command.Weapon);
         _pendingBlocks = new List<AttackBlock>(attackToUse.Blocks.OrderBy(b => b.StartTime));
         _activeBlocks = new List<AttackBlock>();
     }
@@ -315,7 +287,7 @@ public class PlayerBehaviour : MonoBehaviour
                 if (anim.AnimationType == AnimationType.PlayerAnimation)
                     _animator.Play(anim.AnimationClip.name, 1, 0f);
                 else
-                    _heldItemMain.Animator.Play(anim.AnimationClip.name);
+                    _currentAttack.UsedItem.Animator.Play(anim.AnimationClip.name);
                 break;
             case HitboxBlock hitbox:
                 Debug.Log("Activating hitbox");
@@ -439,5 +411,17 @@ public class PlayerBehaviour : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(_body.position + _body.right * _offset1.x + _body.up * _offset1.y, 0.2f);
         }
+    }
+}
+
+public class AttackDataWrapper
+{
+    public AttackDataSO AttackDataSO = null;
+    public Item UsedItem = null;
+
+    public AttackDataWrapper(AttackDataSO attackDataSO, Item usedItem)
+    {
+        AttackDataSO = attackDataSO;
+        UsedItem = usedItem;
     }
 }
