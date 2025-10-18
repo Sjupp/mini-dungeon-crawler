@@ -59,12 +59,12 @@ MonoBehaviour:
     - rid: 7272313212135014708
       type: {class: ShiftBlock, ns: , asm: Assembly-CSharp}
       data:
-        StartTime: 0.51019377
+        StartTime: 0.52730423
         PositionRelative: {x: 1, y: 0, z: 0}
     - rid: 7272313212135014717
       type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}
       data:
-        StartTime: 0.5363716
-        Position: {x: 1, y: 0.5, z: 0}
-        Scale: {x: 1, y: 1, z: 1}
-        _duration: 0.08
+        StartTime: 0.5454973
+        Position: {x: 1.5, y: 0.5, z: 0}
+        Scale: {x: 2, y: 1, z: 1}
+        _duration: 0.17

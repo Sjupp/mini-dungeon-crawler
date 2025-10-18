@@ -7,7 +7,7 @@ public class AttackManager : MonoBehaviour
 {
     public static AttackManager Instance = null;
 
-    public Action<WeaponCommand, AttackDataSO, int, List<AttackSequenceSO>> Attack;
+    public Action<WeaponCommand, AttackDataSO, int, List<AttackSequenceSO>> AttackChosen;
 
     [SerializeField]
     private List<AttackSequenceSO> AttackSequences = null;
@@ -87,7 +87,8 @@ public class AttackManager : MonoBehaviour
             }
         }
 
-        Attack?.Invoke(command, resultingAttack, _commandHistory.Count, finishedSequences);
+        // TODO: Maybe make wrapper class for all this info
+        AttackChosen?.Invoke(command, resultingAttack, _commandHistory.Count, finishedSequences);
 
         return resultingAttack;
     }

@@ -26,8 +26,8 @@ public class InputVisualizer : MonoBehaviour
 
     private void Start()
     {
-        AttackManager.Instance.Attack -= OnAttack;
-        AttackManager.Instance.Attack += OnAttack;
+        AttackManager.Instance.AttackChosen -= OnAttackChosen;
+        AttackManager.Instance.AttackChosen += OnAttackChosen;
     }
 
     private void Update()
@@ -47,7 +47,7 @@ public class InputVisualizer : MonoBehaviour
         }
     }
 
-    private void OnAttack(WeaponCommand inputType, AttackDataSO attackData, int commandHistoryCount, List<AttackSequenceSO> finishedSequences)
+    private void OnAttackChosen(WeaponCommand inputType, AttackDataSO attackData, int commandHistoryCount, List<AttackSequenceSO> finishedSequences)
     {
         UpdateCommandFeed(inputType, attackData);
 
@@ -80,7 +80,7 @@ public class InputVisualizer : MonoBehaviour
         }
     }
 
-    private void UpdateCommandFeed(WeaponCommand inputType, AttackDataSO attackData)
+    private void UpdateCommandFeed(WeaponCommand command, AttackDataSO attackData)
     {
         _timer = _inactivityThreshold;
 
@@ -91,7 +91,7 @@ public class InputVisualizer : MonoBehaviour
                                   Quaternion.identity,
                                   transform);
 
-            createdElement.Init(IconHelper.Instance.GetIconByWeaponType(inputType.WeaponType), attackData.name);
+            createdElement.Init(IconHelper.Instance.GetIconByWeaponType(command.WeaponType), attackData.name);
             _activeElements.Add(createdElement);
         }
         else
@@ -101,7 +101,7 @@ public class InputVisualizer : MonoBehaviour
                       Quaternion.identity,
                       transform);
 
-            createdElement.Init(IconHelper.Instance.GetIconByWeaponType(inputType.WeaponType), attackData.name);
+            createdElement.Init(IconHelper.Instance.GetIconByWeaponType(command.WeaponType), attackData.name);
             _activeElements.Add(createdElement);
 
             for (int i = 0; i < _activeElements.Count - 1; i++)

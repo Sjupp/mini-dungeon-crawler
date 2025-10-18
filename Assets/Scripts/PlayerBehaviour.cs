@@ -168,7 +168,8 @@ public class PlayerBehaviour : MonoBehaviour
 
         if (Time.time > _nextAvailableTimestamp)
         {
-            AttackComplete(); // basically
+            _movementState = MovementState.Free;
+            //AttackComplete();
 
             if (_inputBuffer.Count > 0)
             {
@@ -186,36 +187,33 @@ public class PlayerBehaviour : MonoBehaviour
         // ToDo: proper input actions, held input variants
     }
 
-    private void AttackComplete()
-    {
-        SetMovementState(MovementState.Free);
-    }
+    //private void AttackComplete()
+    //{
+    //    SetMovementState(MovementState.Free);
+    //}
 
-    private void AttackStart(AttackDataSO attack)
-    {
+    //private void AttackStart(AttackDataSO attack)
+    //{
 
-    }
+    //}
 
-    private void SetMovementState(MovementState movementState)
-    {
-        switch (movementState)
-        {
-            case MovementState.Free:
-                _movementState = movementState;
-                break;
-            case MovementState.Slowed:
-                _movementState = movementState;
-                break;
-            case MovementState.Anchored:
-                _movementState = movementState;
-
-                _movementVector = Vector3.zero;
-                _targetVector = Vector3.zero;
-                break;
-            default:
-                break;
-        }
-    }
+    //private void SetMovementState(MovementState movementState)
+    //{
+    //    switch (movementState)
+    //    {
+    //        case MovementState.Free:
+    //            _movementState = movementState;
+    //            break;
+    //        case MovementState.Slowed:
+    //            _movementState = movementState;
+    //            break;
+    //        case MovementState.Anchored:
+    //            _movementState = movementState;
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
 
     private void HandleInput(bool mainHand , InputType inputType)
     {
@@ -227,13 +225,16 @@ public class PlayerBehaviour : MonoBehaviour
 
     private WeaponCommand CreateWeaponCommand(bool mainHand, InputType inputType = InputType.Tap)
     {
+        Item weapon = null;
         var weaponType = WeaponType.Any;
         if (mainHand && _heldItemMain != null)
         {
+            weapon = _heldItemMain;
             weaponType = _heldItemMain.ItemData.WeaponType;
         }
         else if (!mainHand && _heldItemOff != null)
         {
+            weapon = _heldItemOff;
             weaponType = _heldItemMain.ItemData.WeaponType;
         }
         else
@@ -243,6 +244,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
 
         return new WeaponCommand(
+                null,
                 weaponType,
                 inputType,
                 Time.time
@@ -288,10 +290,16 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void ExecuteAttack(AttackDataSO attackToUse, Item temporaryParameter)
     {
-        SetMovementState(attackToUse.MovementState);
+        _movementState = attackToUse.MovementState;
+        if (_movementState == MovementState.Anchored)
+        {
+            _movementVector = Vector3.zero;
+            _targetVector = Vector3.zero;
+            _animator.Play("Player_Idle");
+        }
         
         _latestAttackTimestamp = Time.time;
-        _nextAvailableTimestamp = Time.time + attackToUse.AttackTimeline.Total;
+        _nextAvailableTimestamp = Time.time + attackToUse.GetTotalDuration();
 
         _currentAttack = attackToUse;
         _pendingBlocks = new List<AttackBlock>(attackToUse.Blocks.OrderBy(b => b.StartTime));

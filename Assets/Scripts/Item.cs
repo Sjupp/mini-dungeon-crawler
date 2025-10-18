@@ -12,6 +12,7 @@ public class Item : MonoBehaviour
 
     public Animator Animator { get => _animator; set => _animator = value; }
     public ItemDataSO ItemData { get => _itemData; set => _itemData = value; }
+    public WeaponType Type => _itemData.WeaponType;
 
     public void Init(ItemDataSO itemData)
     {
@@ -39,12 +40,14 @@ public enum InputType
 [System.Serializable]
 public class WeaponCommand
 {
+    //public Item Weapon;
     public WeaponType WeaponType;
     public InputType InputType;
     public float Timestamp;
 
-    public WeaponCommand(WeaponType weaponType, InputType inputType, float time)
+    public WeaponCommand(Item weapon, WeaponType weaponType, InputType inputType, float time)
     {
+        //Weapon = weapon;
         WeaponType = weaponType;
         InputType = inputType;
         Timestamp = time;
@@ -56,4 +59,10 @@ public class WeaponCommand
         success = other.WeaponType == WeaponType && other.InputType == InputType;
         return success;
     }
+}
+
+public class InputData
+{
+    public WeaponType WeaponType;
+    public InputType InputType;
 }
