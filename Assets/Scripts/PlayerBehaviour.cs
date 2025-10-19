@@ -23,7 +23,7 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     private Transform _body = null;
     [SerializeField]
-    private Hitbox _hitBox = null;
+    private AlternatingHitboxes _hitbox = null;
 
     [Header("Settings")]
     [SerializeField]
@@ -107,6 +107,8 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
 
+        _animator.SetFloat("PlayerVelocity", _movementVector.magnitude);
+
         if (Time.time > _shiftComplete)
         {
             _shiftVector = Vector3.zero;
@@ -136,9 +138,9 @@ public class PlayerBehaviour : MonoBehaviour
         if (_heldItemOff != null)
             _heldItemOff.transform.position = _body.position + _body.right * _offset1.x + _body.up * _offset1.y;
 
-        HandleAttackInputs();
-
         HandleAttacking();
+
+        HandleAttackInputs();
 
         HandleInputAvailabilityVisualizer();
     }
@@ -169,7 +171,6 @@ public class PlayerBehaviour : MonoBehaviour
         if (Time.time > _nextAvailableTimestamp)
         {
             _movementState = MovementState.Free;
-            //AttackComplete();
 
             if (_inputBuffer.Count > 0)
             {
@@ -284,12 +285,16 @@ public class PlayerBehaviour : MonoBehaviour
         {
             case AnimationBlock anim:
                 if (anim.AnimationType == AnimationType.PlayerAnimation)
+                {
                     _animator.Play(anim.AnimationClip.name, 1, 0f);
+                }
                 else
+                {
                     _currentAttack.UsedItem.Animator.Play(anim.AnimationClip.name, 0, 0f);
+                }
                 break;
             case HitboxBlock hitbox:
-                _hitBox.Activate(hitbox);
+                _hitbox.ActivateHitbox(hitbox);
                 break;
             case VFXBlock vfx:
                 CreateVFX(vfx);
@@ -304,7 +309,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (block is HitboxBlock hitbox)
         {
-            _hitBox.Cancel();
+            _hitbox.Cancel(hitbox);
         }
         else if (block is VFXBlock vfx)
         {
@@ -349,14 +354,14 @@ public class PlayerBehaviour : MonoBehaviour
 
         _targetVector = _inputVector.normalized;
 
-        if (_inputVector.sqrMagnitude > 0)
-        {
-            _animator.Play("PlayerRun");
-        }
-        else
-        {
-            _animator.Play("PlayerIdle");
-        }
+        //if (_inputVector.sqrMagnitude > 0)
+        //{
+        //    _animator.Play("PlayerRun");
+        //}
+        //else
+        //{
+        //    _animator.Play("PlayerIdle");
+        //}
     }
 
     private void MouseMovementInput()

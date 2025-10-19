@@ -81,15 +81,7 @@ public class ModularAttackEditor : EditorWindow
         {
             var blocksOfType = attackData.Blocks.Where(b => b.GetType() == blockType).ToList();
 
-            if (blocksOfType.Count == 0)
-            {
-                // Optional: Still show the section label even if empty
-                EditorGUILayout.LabelField(blockType.Name.Replace("Block", "") + " Blocks", EditorStyles.boldLabel);
-            }
-            else
-            {
-                EditorGUILayout.LabelField(blockType.Name.Replace("Block", "") + " Blocks", EditorStyles.boldLabel);
-            }
+            EditorGUILayout.LabelField(blockType.Name.Replace("Block", "") + " Blocks", EditorStyles.boldLabel);
 
             EditorGUILayout.BeginHorizontal();
 
@@ -183,6 +175,7 @@ public class ModularAttackEditor : EditorWindow
 
         EditorGUILayout.EndScrollView();
 
+        //GUI.FocusControl(null);
         if (GUI.changed)
         {
             EditorUtility.SetDirty(attackData);

@@ -14,26 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
   Damage: 5
   MovementState: 2
-  AnimationName: Sword_SpinSlash
-  MovementShift: {x: 0, y: 0, z: 0}
-  ShiftDuration: 0
-  AttackTimeline:
-    Windup: 0.6
-    Duration: 0.2
-    Winddown: 0
-  HitboxPosition: {x: 1, y: 0.5, z: 0}
-  HitboxScale: {x: 1, y: 1, z: 1}
-  VFX: {fileID: 0}
-  VFXPosition: {x: 0, y: 0, z: 0}
-  VFXScale: {x: 1, y: 1, z: 1}
-  VFXRotationZ: 0
-  VFXStartDelay: 0
+  TotalDurationOverride: -1
   Blocks:
   - rid: 7272313239740350543
   - rid: 7272313239740350544
   - rid: 7272313239740350545
   - rid: 7272313239740350546
-  TotalDurationOverride: -1
+  - rid: 7272313283050471500
+  - rid: 7272313283050471501
+  - rid: 7272313283050471502
   references:
     version: 2
     RefIds:
@@ -58,7 +47,28 @@ MonoBehaviour:
     - rid: 7272313239740350546
       type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}
       data:
-        StartTime: 0.5199027
+        StartTime: 0.5978495
         Position: {x: 0, y: 0.3, z: 0}
         Scale: {x: 3, y: 2, z: 0}
-        _duration: 0
+        _duration: 0.059999987
+    - rid: 7272313283050471500
+      type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0.6940472
+        Position: {x: 0, y: 0.3, z: 0}
+        Scale: {x: 3, y: 2, z: 0}
+        _duration: 0.059999987
+    - rid: 7272313283050471501
+      type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0.79404724
+        Position: {x: 0, y: 0.3, z: 0}
+        Scale: {x: 3, y: 2, z: 0}
+        _duration: 0.059999987
+    - rid: 7272313283050471502
+      type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}
+      data:
+        StartTime: 0.89784956
+        Position: {x: 0, y: 0.3, z: 0}
+        Scale: {x: 3, y: 2, z: 0}
+        _duration: 0.059999987

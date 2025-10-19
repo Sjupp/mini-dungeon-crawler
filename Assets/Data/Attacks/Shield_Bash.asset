@@ -14,25 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
   Damage: 5
   MovementState: 1
-  AnimationName: Shield_Bash
-  MovementShift: {x: 0, y: 0, z: 0}
-  ShiftDuration: 0
-  AttackTimeline:
-    Windup: 0.2
-    Duration: 0.2
-    Winddown: 0
-  HitboxPosition: {x: 1, y: 0.5, z: 0}
-  HitboxScale: {x: 1, y: 1, z: 1}
-  VFX: {fileID: 0}
-  VFXPosition: {x: 0, y: 0, z: 0}
-  VFXScale: {x: 1, y: 1, z: 1}
-  VFXRotationZ: 0
-  VFXStartDelay: 0
+  TotalDurationOverride: 0.4
   Blocks:
   - rid: 7272313270983721033
   - rid: 7272313270983721039
   - rid: 7272313270983721042
-  TotalDurationOverride: 0.4
   references:
     version: 2
     RefIds:
@@ -41,7 +27,7 @@ MonoBehaviour:
       data:
         StartTime: 0
         AnimationType: 0
-        AnimationClip: {fileID: 7400000, guid: 53337ca72909ca64b997141f8748245a, type: 2}
+        AnimationClip: {fileID: 7400000, guid: a27f59d69dd4b834cab1ba149dbff0e2, type: 2}
     - rid: 7272313270983721039
       type: {class: HitboxBlock, ns: , asm: Assembly-CSharp}
       data:

@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using PrimeTween;
 using UnityEngine;
 
@@ -12,8 +13,17 @@ public class UnitBehaviour : MonoBehaviour, IDamagable
     private SpriteRenderer _unitSprite = null;
     [SerializeField]
     private Transform _visualsTransform = null;
-    //[SerializeField]
-    //private ShakeSettings _shakeSettings = null;
+
+    private Rigidbody2D _rigidbody = null;
+    private Vector3 _movementVector = Vector3.zero;
+
+    //private StateMachine _stateMachine = null;
+    //private StateIdle _stateIdle = null;
+    
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody2D>();
+    }
 
     public void TakeDamage(int damage)
     {
@@ -35,5 +45,10 @@ public class UnitBehaviour : MonoBehaviour, IDamagable
         Tween.PunchLocalRotation(_visualsTransform, Vector3.forward * 15f, 0.2f, 10);
 
         TextManager.Instance.CreateTextAtPosition(damage.ToString(), transform.position + Vector3.up * 1f + Vector3.right * Random.Range(-0.25f, 0.25f));
+    }
+
+    private void FixedUpdate()
+    {
+        _rigidbody.linearVelocity = _movementVector;
     }
 }
