@@ -3,6 +3,7 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 
 [CustomEditor(typeof(BaseState), true)]
 public class AttackBlockEditor : Editor
@@ -21,7 +22,7 @@ public class AttackBlockEditor : Editor
             .Where(t => typeof(AttackBlock).IsAssignableFrom(t) && !t.IsAbstract)
             .ToArray();
 
-        blockTypeNames = blockTypes.Select(t => t.Name).ToArray();
+        blockTypeNames = blockTypes.Select(t => t.Name.Truncate(t.Name.Count() - 5, "")).ToArray();
     }
 
     public override void OnInspectorGUI()
