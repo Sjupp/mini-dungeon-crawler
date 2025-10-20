@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class BaseState : MonoBehaviour, IState
 {
-    [SerializeField]
+    [SerializeReference]
     public List<AttackBlock> AttackBlocks = new();
     [SerializeField]
     public List<StateTransition> StateTransitions = new();
