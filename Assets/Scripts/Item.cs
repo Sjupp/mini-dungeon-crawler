@@ -28,6 +28,8 @@ public enum WeaponType
     Any,
     Sword,
     Shield,
+    Spear,
+    Hammer,
 }
 
 public enum InputType

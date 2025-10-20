@@ -415,6 +415,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitBase
   _unitSprite: {fileID: 378588649}
   _visualsTransform: {fileID: 1623335931}
+  _movementSpeed: 1
+  _accelerationSharpness: 1
+  _targetingRange: 0
+  _attackRange: 1
+  _attackData: {fileID: 0}
+  _itemData: {fileID: 0}
 --- !u!1 &230253662
 GameObject:
   m_ObjectHideFlags: 0
@@ -608,7 +614,7 @@ GameObject:
   - component: {fileID: 433355575}
   - component: {fileID: 433355576}
   m_Layer: 0
-  m_Name: Sprite
+  m_Name: UnitSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -748,7 +754,6 @@ GameObject:
   - component: {fileID: 582765263}
   - component: {fileID: 582765262}
   - component: {fileID: 582765266}
-  - component: {fileID: 582765267}
   m_Layer: 0
   m_Name: Unit_Cyclops
   m_TagString: Untagged
@@ -770,6 +775,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitBase
   _unitSprite: {fileID: 433355576}
   _visualsTransform: {fileID: 1154336814}
+  _movementSpeed: 1
+  _accelerationSharpness: 1
+  _targetingRange: 3
+  _attackRange: 1
+  _attackData: {fileID: 11400000, guid: 37488574081f01a4a8f9699ae8418f8d, type: 2}
+  _itemData: {fileID: 11400000, guid: 0df13034bf037e647aae10810e7f3be8, type: 2}
 --- !u!50 &582765263
 Rigidbody2D:
   serializedVersion: 5
@@ -849,36 +860,42 @@ Transform:
   - {fileID: 1154336814}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &582765266
-MonoBehaviour:
+--- !u!58 &582765266
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 582765261}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe173d6f023665847a8a1b3e0628f8b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::IdleState
-  StateTransitions:
-  - State: {fileID: 582765267}
-    Weight: 0
---- !u!114 &582765267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 582765261}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eee561b20fa65e0438b467d3c9361d0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AttackState
-  StateTransitions:
-  - State: {fileID: 582765266}
-    Weight: 0
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 3
 --- !u!1 &663508135
 GameObject:
   m_ObjectHideFlags: 0
@@ -2467,50 +2484,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1403291420}
   m_CullTransparentMesh: 1
---- !u!1 &1430196661
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1430196663}
-  - component: {fileID: 1430196662}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1430196662
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1430196661}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd2d329cb688de146a1ebd24c72f1d42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Test
---- !u!4 &1430196663
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1430196661}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.39341, y: 1.1266, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1623335930
 GameObject:
   m_ObjectHideFlags: 0
@@ -13438,4 +13411,3 @@ SceneRoots:
   - {fileID: 665343128}
   - {fileID: 137781040}
   - {fileID: 582765265}
-  - {fileID: 1430196663}

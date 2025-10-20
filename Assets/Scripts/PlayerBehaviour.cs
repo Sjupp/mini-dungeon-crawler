@@ -1,4 +1,3 @@
-using PrimeTween;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -114,7 +113,24 @@ public class PlayerBehaviour : MonoBehaviour
             _shiftVector = Vector3.zero;
         }
 
-        if (_movementVector.x > 0)
+        HandleDirectionSwitching();
+
+        if (_heldItemMain != null)
+            _heldItemMain.transform.position = _body.position + _body.right * _offset.x + _body.up * _offset.y;
+
+        if (_heldItemOff != null)
+            _heldItemOff.transform.position = _body.position + _body.right * _offset1.x + _body.up * _offset1.y;
+
+        HandleAttacking();
+
+        HandleAttackInputs();
+
+        HandleInputAvailabilityVisualizer();
+    }
+
+    private void HandleDirectionSwitching()
+    {
+        if (_movementVector.x > 0 && _movementState == MovementState.Free)
         {
             if (!_facingRight)
             {
@@ -131,18 +147,6 @@ public class PlayerBehaviour : MonoBehaviour
                 ChangedDirection(_facingRight);
             }
         }
-
-        if (_heldItemMain != null)
-            _heldItemMain.transform.position = _body.position + _body.right * _offset.x + _body.up * _offset.y;
-
-        if (_heldItemOff != null)
-            _heldItemOff.transform.position = _body.position + _body.right * _offset1.x + _body.up * _offset1.y;
-
-        HandleAttacking();
-
-        HandleAttackInputs();
-
-        HandleInputAvailabilityVisualizer();
     }
 
     private void FixedUpdate()
@@ -268,7 +272,7 @@ public class PlayerBehaviour : MonoBehaviour
         {
             _movementVector = Vector3.zero;
             _targetVector = Vector3.zero;
-            _animator.Play("Player_Idle");
+            _animator.Play("Player_Idle", 0, 0f);
         }
         
         _latestAttackTimestamp = Time.time;
