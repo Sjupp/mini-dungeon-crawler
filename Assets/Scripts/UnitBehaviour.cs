@@ -138,7 +138,7 @@ public class UnitBehaviour : MonoBehaviour, IDamagable
     public void TakeDamage(DamageInfo damageInfo)
     {
         _health -= damageInfo.Damage;
-        OnTakeDamage(damageInfo.Damage);
+        OnTakeDamage(damageInfo);
     }
 
     public bool TryHit(DamageInfo damageInfo)
@@ -150,16 +150,25 @@ public class UnitBehaviour : MonoBehaviour, IDamagable
 
         var success = Time.time - _lastHitTimestamp > _hitInvincibilityDuration;
         if (success)
+        {
             _lastHitTimestamp = Time.time;
+        }
+
         return success;
     }
 
-    private void OnTakeDamage(int damage)
+    private void OnTakeDamage(DamageInfo damageInfo)
     {
-        Tween.Color(_unitSprite, Color.red, Color.white, 0.2f);
-        Tween.PunchLocalRotation(_visualsTransform, Vector3.forward * 15f, 0.2f, 10);
+        float punchDirection = 15f;
+        if (damageInfo.SourceTransform != null && damageInfo.SourceTransform.position.x < transform.position.x)
+        {
+            punchDirection *= -1f;
+        }
 
-        TextManager.Instance.CreateTextAtPosition(damage.ToString(), transform.position + Vector3.up * 1f + Vector3.right * Random.Range(-0.25f, 0.25f));
+        Tween.Color(_unitSprite, Color.red, Color.white, 0.2f);
+        Tween.PunchLocalRotation(_visualsTransform, Vector3.forward * punchDirection, 0.2f, 10, asymmetryFactor: 0.8f);
+
+        TextManager.Instance.CreateTextAtPosition(damageInfo.Damage.ToString(), transform.position + Vector3.up * 1f + Vector3.right * Random.Range(-0.25f, 0.25f));
     }
 
     private void SetCurrentAttack(AttackDataSO attackToUse, Item weaponRef)
