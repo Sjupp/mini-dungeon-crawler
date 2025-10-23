@@ -53,6 +53,8 @@ public class UnitBehaviour : MonoBehaviour, IDamagable
 
     private Faction _faction = Faction.Enemy;
 
+    private ModularAttackSystem _modularAttackSystem = null;
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
