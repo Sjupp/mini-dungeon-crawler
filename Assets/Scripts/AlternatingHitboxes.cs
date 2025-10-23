@@ -9,18 +9,18 @@ public class AlternatingHitboxes : MonoBehaviour
     private Queue<Hitbox> _availableHitboxes = new Queue<Hitbox>();
     private Dictionary<HitboxBlock, Hitbox> _assignedHitboxBlocks = new();
 
-    public void ActivateHitbox(HitboxBlock hitboxBlock)
+    public void ActivateHitbox(HitboxBlock hitboxBlock, DamageInfo damageInfo)
     {
         if (_availableHitboxes.TryDequeue(out Hitbox hitbox))
         {
             _assignedHitboxBlocks.Add(hitboxBlock, hitbox);
-            hitbox.Activate(hitboxBlock);
+            hitbox.Activate(hitboxBlock, damageInfo);
         }
         else
         {
             var newHitbox = Instantiate(_hitboxPrefab, transform);
             _assignedHitboxBlocks.Add(hitboxBlock, newHitbox);
-            newHitbox.Activate(hitboxBlock);
+            newHitbox.Activate(hitboxBlock, damageInfo);
         }
     }
     

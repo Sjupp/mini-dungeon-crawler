@@ -2,6 +2,6 @@ using UnityEngine;
 
 public interface IDamagable
 {
-    bool TryHit();
-    void TakeDamage(int damage);
+    bool TryHit(DamageInfo damageInfo);
+    void TakeDamage(DamageInfo damageInfo);
 }

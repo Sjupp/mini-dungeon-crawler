@@ -51,6 +51,8 @@ public class UnitBehaviour : MonoBehaviour, IDamagable
     private Item _heldItem = null;
     private bool _facingRight = true;
 
+    private Faction _faction = Faction.Enemy;
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -133,14 +135,19 @@ public class UnitBehaviour : MonoBehaviour, IDamagable
         }
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(DamageInfo damageInfo)
     {
-        _health -= damage;
-        OnTakeDamage(damage);
+        _health -= damageInfo.Damage;
+        OnTakeDamage(damageInfo.Damage);
     }
 
-    public bool TryHit()
+    public bool TryHit(DamageInfo damageInfo)
     {
+        if (_faction == damageInfo.SourceFaction)
+        {
+            return false;
+        }
+
         var success = Time.time - _lastHitTimestamp > _hitInvincibilityDuration;
         if (success)
             _lastHitTimestamp = Time.time;

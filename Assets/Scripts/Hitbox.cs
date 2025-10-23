@@ -5,8 +5,12 @@ public class Hitbox : MonoBehaviour
     [SerializeField]
     private Collider2D _hitboxCollider = null;
 
-    public void Activate(HitboxBlock hitbox)
+    private DamageInfo _damageInfo = null;
+
+    public void Activate(HitboxBlock hitbox, DamageInfo damageInfo)
     {
+        _damageInfo = damageInfo;
+
         transform.localPosition = hitbox.Position;
         transform.localScale = hitbox.Scale;
 
@@ -22,9 +26,9 @@ public class Hitbox : MonoBehaviour
     {
         if (collision.TryGetComponent(out IDamagable damagable))
         {
-            if (damagable.TryHit())
+            if (damagable.TryHit(_damageInfo))
             {
-                damagable.TakeDamage(5);
+                damagable.TakeDamage(_damageInfo);
             }
         }
     }

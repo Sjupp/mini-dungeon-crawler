@@ -10,6 +10,27 @@ public enum MovementState
     Anchored
 }
 
+public enum Faction
+{
+    None,
+    Player,
+    Enemy
+}
+
+public class DamageInfo
+{
+    public int Damage;
+    public Transform SourceTransform;
+    public Faction SourceFaction;
+
+    public DamageInfo(int damage, Transform sourceTransform, Faction sourceFaction)
+    {
+        Damage = damage;
+        SourceTransform = sourceTransform;
+        SourceFaction = sourceFaction;
+    }
+}
+
 public class PlayerBehaviour : MonoBehaviour
 {
     [Header("Debug / Temp")]
@@ -61,6 +82,8 @@ public class PlayerBehaviour : MonoBehaviour
     private AttackDataWrapper _currentAttack = null;
     private List<AttackBlock> _pendingBlocks = new();
     private List<AttackBlock> _activeBlocks = new();
+
+    private Faction _faction = Faction.Player;
 
     private void Awake()
     {
@@ -298,7 +321,7 @@ public class PlayerBehaviour : MonoBehaviour
                 }
                 break;
             case HitboxBlock hitbox:
-                _hitbox.ActivateHitbox(hitbox);
+                _hitbox.ActivateHitbox(hitbox, GenerateDamageInfo(_currentAttack));
                 break;
             case VFXBlock vfx:
                 CreateVFX(vfx);
@@ -307,6 +330,11 @@ public class PlayerBehaviour : MonoBehaviour
                 SetShiftOverTime(shift.PositionRelative, shift.Duration);
                 break;
         }
+    }
+
+    private DamageInfo GenerateDamageInfo(AttackDataWrapper currentAttack)
+    {
+        return new DamageInfo(currentAttack.AttackDataSO.Damage, transform, _faction);
     }
 
     private void EndBlock(AttackBlock block)
