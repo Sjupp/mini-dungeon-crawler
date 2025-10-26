@@ -35,7 +35,7 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
     private float _targetingRange = 3f;
     [SerializeField]
     private float _attackRange = 1f;
-  
+
     private float _shiftCompleteTimestamp = 0f;
 
     [SerializeField]
@@ -84,6 +84,7 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
                 if (Vector3.Distance(transform.position, _target.position) > _targetingRange * 1.5f)
                 {
                     _target = null;
+                    TextManager.Instance.CreateTextAtPosition("?", transform.position + Vector3.up);
                     return;
                 }
             }
@@ -133,6 +134,7 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
     public void AddTarget(Transform targetTransform)
     {
         _target = targetTransform;
+        TextManager.Instance.CreateTextAtPosition("!", transform.position + Vector3.up);
     }
 
     public void SetMovementState(MovementState state)
