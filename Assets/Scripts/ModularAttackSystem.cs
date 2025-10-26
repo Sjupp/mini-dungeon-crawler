@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ModularAttackSystem : MonoBehaviour
+public class ModularAttackSystem
 {
     // Attack data
     private AttackDataWrapper _currentAttack = null;
@@ -10,26 +10,33 @@ public class ModularAttackSystem : MonoBehaviour
     private List<AttackBlock> _activeBlocks = new();
     private float _latestAttackTimestamp = 0f;
     private float _nextAvailableTimestamp = 0f;
+    private AlternatingHitboxes _alternatingHitboxes = null;
 
+    private IModularAttackSystemUser _user;
 
-    private void Update()
+    public bool CanAttack => Time.time > _nextAvailableTimestamp;
+    public float LatestAttackTimestamp => _latestAttackTimestamp;
+    public float NextAvailableTimestamp => _nextAvailableTimestamp;
+
+    public ModularAttackSystem(IModularAttackSystemUser user)
     {
-        HandleAttacking();
-
-        // update heldItemPos
-
-
+        _user = user;
+        _alternatingHitboxes = new();
     }
 
-    private void SetCurrentAttack(AttackDataSO attackToUse, Item weaponRef)
+    public void Tick()
     {
-        //_movementState = attackToUse.MovementState;
-        //if (_movementState == MovementState.Anchored)
-        //{
-        //    _movementVector = Vector3.zero;
-        //    _targetVector = Vector3.zero;
-        //    //_animator.Play("Player_Idle");
-        //}
+        if (Time.time > _nextAvailableTimestamp && _user.MovementState != MovementState.Free)
+        {
+            _user.SetMovementState(MovementState.Free);
+        }
+
+        HandleAttacking();
+    }
+
+    public void SetCurrentAttack(AttackDataSO attackToUse, Item weaponRef)
+    {
+        _user.SetMovementState(attackToUse.MovementState);
 
         _latestAttackTimestamp = Time.time;
         _nextAvailableTimestamp = Time.time + attackToUse.GetTotalDuration();
@@ -83,7 +90,10 @@ public class ModularAttackSystem : MonoBehaviour
             case AnimationBlock anim:
                 if (anim.AnimationType == AnimationType.PlayerAnimation)
                 {
-                    //_animator.Play(anim.AnimationClip.name, 1, 0f);
+                    if (_user.Animator != null)
+                    {
+                        _user.Animator.Play(anim.AnimationClip.name, 1, 0f);
+                    }
                 }
                 else
                 {
@@ -91,13 +101,16 @@ public class ModularAttackSystem : MonoBehaviour
                 }
                 break;
             case HitboxBlock hitbox:
-                //_hitbox.ActivateHitbox(hitbox);
+                _alternatingHitboxes.ActivateHitbox(
+                    hitbox,
+                    _user.GenerateDamageInfo(_currentAttack),
+                    _user.Transform);
                 break;
             case VFXBlock vfx:
-                //CreateVFX(vfx);
+                CreateVFX(vfx);
                 break;
             case ShiftBlock shift:
-                //SetShiftOverTime(shift.PositionRelative, shift.Duration);
+                _user.ShiftBegin(shift.PositionRelative, shift.Duration);
                 break;
         }
     }
@@ -106,7 +119,7 @@ public class ModularAttackSystem : MonoBehaviour
     {
         if (block is HitboxBlock hitbox)
         {
-            //_hitbox.Cancel(hitbox);
+            _alternatingHitboxes.Cancel(hitbox);
         }
         else if (block is VFXBlock vfx)
         {
@@ -114,8 +127,22 @@ public class ModularAttackSystem : MonoBehaviour
         }
         else if (block is ShiftBlock shift)
         {
-            //_shiftComplete = Time.time;
-            //_shiftVector = Vector3.zero;
+            _user.ShiftCancel();
+        }
+    }
+
+    private void CreateVFX(VFXBlock vfxBlock)
+    {
+        var vfx = GameObject.Instantiate(vfxBlock.VFX, _user.Transform);
+        vfx.transform.SetLocalPositionAndRotation(vfxBlock.VFXPosition, Quaternion.Euler(0f, 0f, vfxBlock.VFXRotationZ));
+        if (vfxBlock.VFXScale != Vector3.one)
+        {
+            vfx.transform.localScale = vfxBlock.VFXScale; // scaling pixel art vfx usually looks bad
+        }
+        if (vfxBlock.StartTime != 0f)
+        {
+            var variable = vfx.main;
+            variable.startDelay = vfxBlock.StartTime;
         }
     }
 }

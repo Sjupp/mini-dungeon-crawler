@@ -1,15 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AlternatingHitboxes : MonoBehaviour
+public class AlternatingHitboxes
 {
-    [SerializeField]
-    private Hitbox _hitboxPrefab = null;
-
     private Queue<Hitbox> _availableHitboxes = new Queue<Hitbox>();
     private Dictionary<HitboxBlock, Hitbox> _assignedHitboxBlocks = new();
 
-    public void ActivateHitbox(HitboxBlock hitboxBlock, DamageInfo damageInfo)
+    public void ActivateHitbox(HitboxBlock hitboxBlock, DamageInfo damageInfo, Transform transform)
     {
         if (_availableHitboxes.TryDequeue(out Hitbox hitbox))
         {
@@ -18,9 +15,15 @@ public class AlternatingHitboxes : MonoBehaviour
         }
         else
         {
-            var newHitbox = Instantiate(_hitboxPrefab, transform);
-            _assignedHitboxBlocks.Add(hitboxBlock, newHitbox);
-            newHitbox.Activate(hitboxBlock, damageInfo);
+            var go = new GameObject("Hitbox");
+            go.transform.SetParent(transform, false);
+            var hitboxComponent = go.AddComponent<Hitbox>();
+            var colliderComponent = go.AddComponent<BoxCollider2D>();
+            colliderComponent.isTrigger = true;
+            hitboxComponent.Init(colliderComponent);
+
+            _assignedHitboxBlocks.Add(hitboxBlock, hitboxComponent);
+            hitboxComponent.Activate(hitboxBlock, damageInfo);
         }
     }
     

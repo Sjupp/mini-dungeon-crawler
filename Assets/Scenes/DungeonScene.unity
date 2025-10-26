@@ -984,7 +984,6 @@ GameObject:
   - component: {fileID: 665343125}
   - component: {fileID: 665343130}
   - component: {fileID: 665343132}
-  - component: {fileID: 665343133}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1109,25 +1108,11 @@ MonoBehaviour:
   _progressIndicator: {fileID: 6995970381906807461}
   _vfxCloud: {fileID: 5797196491164618941, guid: fd224a93dfa28074abab4a71db53dfcf, type: 3}
   _body: {fileID: 230253663}
-  _hitbox: {fileID: 665343133}
   _moveSpeed: 4
   _accelerationSharpness: 7.5
   _decelerationSharpness: 7.5
   _offset: {x: 0.45, y: -0.3, z: 0}
   _offset1: {x: -0.45, y: -0.3, z: 0}
---- !u!114 &665343133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 665343124}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 495d1ee23c5000e42a4e026115ef5798, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AlternatingHitboxes
-  _hitboxPrefab: {fileID: 6256962616118406038, guid: 9d8c5641b192e7a4d8bded8c2b09164e, type: 3}
 --- !u!1 &711998523
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,10 +2,14 @@ using UnityEngine;
 
 public class Hitbox : MonoBehaviour
 {
-    [SerializeField]
     private Collider2D _hitboxCollider = null;
-
     private DamageInfo _damageInfo = null;
+
+    public void Init(Collider2D hitboxCollider)
+    {
+        _hitboxCollider = hitboxCollider;
+        _hitboxCollider.enabled = false;
+    }
 
     public void Activate(HitboxBlock hitbox, DamageInfo damageInfo)
     {
@@ -35,7 +39,7 @@ public class Hitbox : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (_hitboxCollider.enabled)
+        if (_hitboxCollider != null && _hitboxCollider.enabled)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireCube(transform.position, transform.localScale);

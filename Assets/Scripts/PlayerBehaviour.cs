@@ -17,21 +17,7 @@ public enum Faction
     Enemy
 }
 
-public class DamageInfo
-{
-    public int Damage;
-    public Transform SourceTransform;
-    public Faction SourceFaction;
-
-    public DamageInfo(int damage, Transform sourceTransform, Faction sourceFaction)
-    {
-        Damage = damage;
-        SourceTransform = sourceTransform;
-        SourceFaction = sourceFaction;
-    }
-}
-
-public class PlayerBehaviour : MonoBehaviour
+public class PlayerBehaviour : MonoBehaviour, IModularAttackSystemUser
 {
     [Header("Debug / Temp")]
     [SerializeField]
@@ -56,7 +42,7 @@ public class PlayerBehaviour : MonoBehaviour
     private Vector3 _offset = Vector3.zero;
     [SerializeField]
     private Vector3 _offset1 = Vector3.zero;
-    
+
     private InputAction _moveAction;
     private InputAction _jumpAction;
     private Vector2 _inputVector = Vector2.zero;
@@ -73,17 +59,20 @@ public class PlayerBehaviour : MonoBehaviour
     private bool _facingRight = true;
     private MovementState _movementState = MovementState.Free;
 
-    private float _latestAttackTimestamp = 0f;
-    private float _nextAvailableTimestamp = 0f;
-    private float _shiftComplete = 0f;
+    private float _shiftCompleteTimestamp = 0f;
 
     private float _inputBufferThreshold = 0.2f;
     private Queue<WeaponCommand> _inputBuffer = new();
     private AttackDataWrapper _currentAttack = null;
-    private List<AttackBlock> _pendingBlocks = new();
-    private List<AttackBlock> _activeBlocks = new();
+
 
     private Faction _faction = Faction.Player;
+
+    private ModularAttackSystem _modularAttackSystem = null;
+
+    public Transform Transform => transform;
+    public Animator Animator => _animator;
+    public MovementState MovementState => _movementState;
 
     private void Awake()
     {
@@ -95,6 +84,8 @@ public class PlayerBehaviour : MonoBehaviour
 
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+
+        _modularAttackSystem = new(this);
     }
 
     private void Start()
@@ -107,11 +98,11 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (true)
         {
-            KeyboardMovementInput();
+            HandleKeyboardMovementInput();
         }
         else
         {
-            MouseMovementInput();
+            HandleMouseMovementInput();
         }
 
 
@@ -131,7 +122,7 @@ public class PlayerBehaviour : MonoBehaviour
 
         _animator.SetFloat("PlayerVelocity", _movementVector.magnitude);
 
-        if (Time.time > _shiftComplete)
+        if (Time.time > _shiftCompleteTimestamp)
         {
             _shiftVector = Vector3.zero;
         }
@@ -144,11 +135,16 @@ public class PlayerBehaviour : MonoBehaviour
         if (_heldItemOff != null)
             _heldItemOff.transform.position = _body.position + _body.right * _offset1.x + _body.up * _offset1.y;
 
-        HandleAttacking();
+        _modularAttackSystem.Tick();
 
         HandleAttackInputs();
 
         HandleInputAvailabilityVisualizer();
+    }
+
+    private void FixedUpdate()
+    {
+        _rb.linearVelocity = _movementVector + _shiftVector;
     }
 
     private void HandleDirectionSwitching()
@@ -161,7 +157,7 @@ public class PlayerBehaviour : MonoBehaviour
                 ChangedDirection(_facingRight);
             }
         }
-        else if (_movementVector.x < 0)
+        else if (_movementVector.x < 0 && _movementState == MovementState.Free)
         {
             if (_facingRight)
             {
@@ -172,56 +168,6 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-        _rb.linearVelocity = _movementVector + _shiftVector;
-    }
-
-    private void SetShiftOverTime(Vector3 relativeOffset, float time)
-    {
-        _shiftComplete = Time.time + time;
-        _shiftVector = new Vector3(transform.right.x * relativeOffset.x / time, relativeOffset.y / time, 0f);
-    }
-
-    private void HandleAttackInputs()
-    {
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            HandleInput(true, InputType.Tap);
-        }
-
-        if (Mouse.current.rightButton.wasPressedThisFrame)
-        {
-            HandleInput(false, InputType.Tap);
-        }
-
-        if (Time.time > _nextAvailableTimestamp)
-        {
-            _movementState = MovementState.Free;
-
-            if (_inputBuffer.Count > 0)
-            {
-                // Do I even need a queue if I ever just use the first one??
-                // What if I need quarter circle shoryuken inputs!?!?
-                var command = _inputBuffer.Dequeue();
-                _inputBuffer.Clear();
-
-                var attackToUse = AttackManager.Instance.GetNextAttack(command);
-
-                SetCurrentAttack(attackToUse, command);
-            }
-        }
-
-        // ToDo: proper input actions, held input variants
-    }
-
-    private void HandleInput(bool mainHand , InputType inputType)
-    {
-        if (Time.time > _nextAvailableTimestamp - _inputBufferThreshold)
-        {
-            _inputBuffer.Enqueue(CreateWeaponCommand(mainHand, inputType));
-        }
-    }
 
     private WeaponCommand CreateWeaponCommand(bool mainHand, InputType inputType = InputType.Tap)
     {
@@ -251,124 +197,6 @@ public class PlayerBehaviour : MonoBehaviour
                 );
     }
 
-    private void HandleAttacking()
-    {
-        if (_currentAttack == null)
-            return;
-
-        float elapsed = Time.time - _latestAttackTimestamp;
-
-        // Trigger blocks when start time reached
-        for (int i = _pendingBlocks.Count - 1; i >= 0; i--)
-        {
-            var block = _pendingBlocks[i];
-            if (elapsed >= block.StartTime)
-            {
-                TriggerBlock(block);
-                _activeBlocks.Add(block);
-                _pendingBlocks.RemoveAt(i);
-            }
-        }
-
-        // Handle block durations (e.g., disabling hitboxes)
-        for (int i = _activeBlocks.Count - 1; i >= 0; i--)
-        {
-            var block = _activeBlocks[i];
-            if (elapsed >= block.StartTime + block.Duration)
-            {
-                EndBlock(block);
-                _activeBlocks.RemoveAt(i);
-            }
-        }
-
-        // Optionally clear _currentAttack once all blocks finished
-        if (_pendingBlocks.Count == 0 && _activeBlocks.Count == 0)
-        {
-            _currentAttack = null;
-        }
-    }
-
-    private void SetCurrentAttack(AttackDataSO attackToUse, WeaponCommand command)
-    {
-        _movementState = attackToUse.MovementState;
-        if (_movementState == MovementState.Anchored)
-        {
-            _movementVector = Vector3.zero;
-            _targetVector = Vector3.zero;
-            _animator.Play("Player_Idle", 0, 0f);
-        }
-        
-        _latestAttackTimestamp = Time.time;
-        _nextAvailableTimestamp = Time.time + attackToUse.GetTotalDuration();
-
-        _currentAttack = new AttackDataWrapper(attackToUse, command.Weapon);
-        _pendingBlocks = new List<AttackBlock>(attackToUse.Blocks.OrderBy(b => b.StartTime));
-        _activeBlocks = new List<AttackBlock>();
-    }
-
-    private void TriggerBlock(AttackBlock block)
-    {
-        switch (block)
-        {
-            case AnimationBlock anim:
-                if (anim.AnimationType == AnimationType.PlayerAnimation)
-                {
-                    _animator.Play(anim.AnimationClip.name, 1, 0f);
-                }
-                else
-                {
-                    _currentAttack.UsedItem.Animator.Play(anim.AnimationClip.name, 0, 0f);
-                }
-                break;
-            case HitboxBlock hitbox:
-                _hitbox.ActivateHitbox(hitbox, GenerateDamageInfo(_currentAttack));
-                break;
-            case VFXBlock vfx:
-                CreateVFX(vfx);
-                break;
-            case ShiftBlock shift:
-                SetShiftOverTime(shift.PositionRelative, shift.Duration);
-                break;
-        }
-    }
-
-    private DamageInfo GenerateDamageInfo(AttackDataWrapper currentAttack)
-    {
-        return new DamageInfo(currentAttack.AttackDataSO.Damage, transform, _faction);
-    }
-
-    private void EndBlock(AttackBlock block)
-    {
-        if (block is HitboxBlock hitbox)
-        {
-            _hitbox.Cancel(hitbox);
-        }
-        else if (block is VFXBlock vfx)
-        {
-            //DestroyVFX(vfx);
-        }
-        else if (block is ShiftBlock shift)
-        {
-            _shiftComplete = Time.time;
-            _shiftVector = Vector3.zero;
-        }
-    }
-
-    private void CreateVFX(VFXBlock vfxBlock)
-    {
-        var vfx = Instantiate(vfxBlock.VFX, transform);
-        vfx.transform.SetLocalPositionAndRotation(vfxBlock.VFXPosition, Quaternion.Euler(0f, 0f, vfxBlock.VFXRotationZ));
-        if (vfxBlock.VFXScale != Vector3.one)
-        {
-            vfx.transform.localScale = vfxBlock.VFXScale; // scaling pixel art vfx usually looks bad
-        }
-        if (vfxBlock.StartTime != 0f)
-        {
-            var variable = vfx.main;
-            variable.startDelay = vfxBlock.StartTime;
-        }
-    }
-
     private void ChangedDirection(bool facingRight)
     {
         transform.rotation = Quaternion.Euler(0f, facingRight ? 0f : 180f, 0f);
@@ -380,23 +208,75 @@ public class PlayerBehaviour : MonoBehaviour
             _heldItemOff.transform.localRotation = Quaternion.Euler(0f, facingRight ? 0f : 180f, 0f);
     }
 
-    private void KeyboardMovementInput()
+    private void HandleInputAvailabilityVisualizer()
+    {
+        var next = _modularAttackSystem.NextAvailableTimestamp;
+        var latest = _modularAttackSystem.LatestAttackTimestamp;
+        if (_modularAttackSystem.CanAttack)
+        {
+            _progressIndicator.SetElementColor(Color.green);
+        }
+        else if (Time.time > next - _inputBufferThreshold)
+        {
+            _progressIndicator.SetElementColor(Color.yellow);
+        }
+        else
+        {
+            _progressIndicator.SetElementColor(Color.red);
+        }
+
+        if (next > 0)
+            _progressIndicator.UpdateElement(Time.time - latest, next - latest);
+    }
+
+
+    #region Input Handling, Movement & Attacking
+    private void HandleAttackInputs()
+    {
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            TryAddInputToBuffer(true, InputType.Tap);
+        }
+
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            TryAddInputToBuffer(false, InputType.Tap);
+        }
+
+        if (_modularAttackSystem.CanAttack)
+        {
+            if (_inputBuffer.Count > 0)
+            {
+                // Do I even need a queue if I ever just use the first one??
+                // What if I need quarter circle shoryuken inputs!?!?
+                var command = _inputBuffer.Dequeue();
+                _inputBuffer.Clear();
+
+                var attackToUse = AttackManager.Instance.GetNextAttack(command);
+
+                _modularAttackSystem.SetCurrentAttack(attackToUse, command.Weapon);
+            }
+        }
+
+        // ToDo: proper input actions, held input variants
+    }
+
+    private void TryAddInputToBuffer(bool mainHand, InputType inputType)
+    {
+        if (Time.time > _modularAttackSystem.NextAvailableTimestamp - _inputBufferThreshold)
+        {
+            _inputBuffer.Enqueue(CreateWeaponCommand(mainHand, inputType));
+        }
+    }
+
+    private void HandleKeyboardMovementInput()
     {
         _inputVector = _moveAction.ReadValue<Vector2>();
 
         _targetVector = _inputVector.normalized;
-
-        //if (_inputVector.sqrMagnitude > 0)
-        //{
-        //    _animator.Play("PlayerRun");
-        //}
-        //else
-        //{
-        //    _animator.Play("PlayerIdle");
-        //}
     }
 
-    private void MouseMovementInput()
+    private void HandleMouseMovementInput()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
@@ -415,25 +295,43 @@ public class PlayerBehaviour : MonoBehaviour
             _targetVector = Vector3.zero;
         }
     }
+    #endregion
 
-    private void HandleInputAvailabilityVisualizer()
+    #region IModularAttackSystemUser Methods
+    public DamageInfo GenerateDamageInfo(AttackDataWrapper data)
     {
-        if (Time.time > _nextAvailableTimestamp)
+        return new DamageInfo()
         {
-            _progressIndicator.SetElementColor(Color.green);
-        }
-        else if (Time.time > _nextAvailableTimestamp - _inputBufferThreshold)
-        {
-            _progressIndicator.SetElementColor(Color.yellow);
-        }
-        else
-        {
-            _progressIndicator.SetElementColor(Color.red);
-        }
-
-        if (_nextAvailableTimestamp > 0)
-            _progressIndicator.UpdateElement(Time.time - _latestAttackTimestamp, _nextAvailableTimestamp - _latestAttackTimestamp);
+            Damage = data.AttackDataSO.Damage,
+            SourceTransform = transform,
+            SourceFaction = _faction
+        };
     }
+
+    public void ShiftBegin(Vector3 positionRelative, float time)
+    {
+        _shiftCompleteTimestamp = Time.time + time;
+        _shiftVector = new Vector3(transform.right.x * positionRelative.x / time, positionRelative.y / time, 0f);
+    }
+
+    public void ShiftCancel()
+    {
+        _shiftCompleteTimestamp = Time.time;
+        _shiftVector = Vector3.zero;
+    }
+
+    public void SetMovementState(MovementState state)
+    {
+        _movementState = state;
+
+        if (_movementState == MovementState.Anchored)
+        {
+            _movementVector = Vector3.zero;
+            _targetVector = Vector3.zero;
+            _animator.Play("Player_Idle");
+        }
+    }
+    #endregion
 
     private void OnDrawGizmos()
     {
@@ -445,16 +343,5 @@ public class PlayerBehaviour : MonoBehaviour
             Gizmos.DrawWireSphere(_body.position + _body.right * _offset1.x + _body.up * _offset1.y, 0.2f);
         }
     }
-}
 
-public class AttackDataWrapper
-{
-    public AttackDataSO AttackDataSO = null;
-    public Item UsedItem = null;
-
-    public AttackDataWrapper(AttackDataSO attackDataSO, Item usedItem)
-    {
-        AttackDataSO = attackDataSO;
-        UsedItem = usedItem;
-    }
 }
