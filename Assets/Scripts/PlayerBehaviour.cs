@@ -1,3 +1,4 @@
+using PrimeTween;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -17,7 +18,7 @@ public enum Faction
     Enemy
 }
 
-public class PlayerBehaviour : MonoBehaviour, IModularAttackSystemUser
+public class PlayerBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
 {
     [Header("Debug / Temp")]
     [SerializeField]
@@ -43,6 +44,8 @@ public class PlayerBehaviour : MonoBehaviour, IModularAttackSystemUser
     [SerializeField]
     private Vector3 _offset1 = Vector3.zero;
 
+    private int _health = 100;
+
     private InputAction _moveAction;
     private InputAction _jumpAction;
     private Vector2 _inputVector = Vector2.zero;
@@ -55,6 +58,7 @@ public class PlayerBehaviour : MonoBehaviour, IModularAttackSystemUser
 
     private Rigidbody2D _rb = null;
     private Animator _animator = null;
+    private SpriteRenderer _spriteRenderer = null;
 
     private bool _facingRight = true;
     private MovementState _movementState = MovementState.Free;
@@ -65,6 +69,8 @@ public class PlayerBehaviour : MonoBehaviour, IModularAttackSystemUser
     private Queue<WeaponCommand> _inputBuffer = new();
     private AttackDataWrapper _currentAttack = null;
 
+    private float _lastHitTimestamp = 0f;
+    private float _hitInvincibilityDuration = 0f;
 
     private Faction _faction = Faction.Player;
 
@@ -84,6 +90,7 @@ public class PlayerBehaviour : MonoBehaviour, IModularAttackSystemUser
 
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        _spriteRenderer = _body.GetComponent<SpriteRenderer>();
 
         _modularAttackSystem = new(this);
     }
@@ -344,4 +351,39 @@ public class PlayerBehaviour : MonoBehaviour, IModularAttackSystemUser
         }
     }
 
+    public bool TryHit(DamageInfo damageInfo)
+    {
+        if (_faction == damageInfo.SourceFaction)
+        {
+            return false;
+        }
+
+        var success = Time.time - _lastHitTimestamp > _hitInvincibilityDuration;
+        if (success)
+        {
+            _lastHitTimestamp = Time.time;
+        }
+
+        return success;
+    }
+
+    public void TakeDamage(DamageInfo damageInfo)
+    {
+        _health -= damageInfo.Damage;
+        OnTakeDamage(damageInfo);
+    }
+
+    private void OnTakeDamage(DamageInfo damageInfo)
+    {
+        float punchDirection = 15f;
+        if (damageInfo.SourceTransform != null && damageInfo.SourceTransform.position.x < transform.position.x)
+        {
+            punchDirection *= -1f;
+        }
+
+        Tween.Color(_spriteRenderer, Color.red, Color.white, 0.2f);
+        Tween.PunchLocalRotation(_body, Vector3.forward * punchDirection, 0.2f, 10, asymmetryFactor: 0.8f);
+
+        TextManager.Instance.CreateTextAtPosition(damageInfo.Damage.ToString(), transform.position + Vector3.up * 1f + Vector3.right * Random.Range(-0.25f, 0.25f));
+    }
 }

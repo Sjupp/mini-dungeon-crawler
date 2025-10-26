@@ -130,12 +130,9 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
         _rigidbody.linearVelocity = _movementVector + _shiftVector;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void AddTarget(Transform targetTransform)
     {
-        if (collision.TryGetComponent(out PlayerBehaviour playerBehaviour))
-        {
-            _target = playerBehaviour.transform;
-        }
+        _target = targetTransform;
     }
 
     public void SetMovementState(MovementState state)
@@ -175,7 +172,7 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
     private void OnTakeDamage(DamageInfo damageInfo)
     {
         float punchDirection = 15f;
-        if (damageInfo.SourceTransform != null && damageInfo.SourceTransform.position.x < transform.position.x)
+        if (damageInfo.SourceTransform != null && damageInfo.SourceTransform.position.x < transform.position.x && _facingRight)
         {
             punchDirection *= -1f;
         }
