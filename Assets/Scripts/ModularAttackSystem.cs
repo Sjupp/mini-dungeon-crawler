@@ -97,7 +97,7 @@ public class ModularAttackSystem
                 }
                 else
                 {
-                    _currentAttack.UsedItem.Animator.Play(anim.AnimationClip.name, 0, 0f);
+                    _currentAttack.UsedItem.PlayItemAnimation(anim.AnimationClip.name);
                 }
                 break;
             case HitboxBlock hitbox:

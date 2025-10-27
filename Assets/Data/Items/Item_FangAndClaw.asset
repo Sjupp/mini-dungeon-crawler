@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3703bddd2831df49bacf5273e62c9e7, type: 3}
-  m_Name: Item_Sword
+  m_Name: Item_FangAndClaw
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
-  ItemID: 0
-  ItemName: Sword
-  WeaponType: 1
+  ItemID: 4
+  ItemName: Fang and Claw
+  WeaponType: 0
   Damage: 2
-  Knockback: 20
-  IdleAnimationName: Sword_Idle
-  Sprite: {fileID: 1818222854, guid: 3b01df6d28f53f54b81549198af77dba, type: 3}
+  Knockback: 0
+  IdleAnimationName: 
+  Sprite: {fileID: 21300000, guid: 4580a19d8c354df4a8ee0618d1bdcc13, type: 3}

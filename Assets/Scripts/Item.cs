@@ -17,9 +17,20 @@ public class Item : MonoBehaviour
     public void Init(ItemDataSO itemData)
     {
         _itemData = itemData;
+        
         _spriteRenderer.sprite = itemData.Sprite;
-        _animator.Play(itemData.IdleAnimationName);
+
+        PlayItemAnimation(itemData.IdleAnimationName);
+
         gameObject.name = "item_" + itemData.ItemName;
+    }
+
+    public void PlayItemAnimation(string animationClipName)
+    {
+        if (!string.IsNullOrEmpty(animationClipName))
+        {
+            _animator.Play(animationClipName, 0, 0f);
+        }
     }
 }
 

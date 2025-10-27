@@ -142,6 +142,17 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
         _rigidbody.linearVelocity = _movementVector + _shiftVector + _knockbackVector;
     }
 
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (_knockbackVector.sqrMagnitude > 0 && collision.collider.CompareTag("Terrain"))
+        {
+            Debug.Log("I was knocked into something");
+            _knockbackVector = Vector3.zero;
+            TakeDamage(new DamageInfo(1, 0, null, Faction.None));
+        }
+    }
+
     public void AddTarget(Transform targetTransform)
     {
         _target = targetTransform;
