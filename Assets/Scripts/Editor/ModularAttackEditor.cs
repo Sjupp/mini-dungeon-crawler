@@ -39,7 +39,7 @@ public class ModularAttackEditor : EditorWindow
         EditorGUILayout.LabelField("Attack Metadata", EditorStyles.boldLabel);
 
         attackData.MovementState = (MovementState)EditorGUILayout.EnumPopup("Movement State", attackData.MovementState);
-        attackData.Damage = EditorGUILayout.IntField("Damage", attackData.Damage);
+        attackData.AttackScaling = EditorGUILayout.FloatField("AttackScaling", attackData.AttackScaling);
 
         EditorGUILayout.Space(10);
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab8076bd3a2b2ba429d1261eef7baa8f, type: 3}
   m_Name: Shield_Retreat
   m_EditorClassIdentifier: Assembly-CSharp::AttackDataSO
-  Damage: 5
+  AttackScaling: 1
   MovementState: 0
   TotalDurationOverride: -1
   Blocks:

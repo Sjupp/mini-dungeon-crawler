@@ -6,7 +6,10 @@ using UnityEngine;
 
 public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
 {
+    [SerializeField]
     private int _health = 100;
+    [SerializeField]
+    private int _weight = 10;
 
     private float _lastHitTimestamp = 0f;
     private float _hitInvincibilityDuration = 0f;
@@ -21,12 +24,15 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
     private Vector3 _movementVector = Vector3.zero;
     private Vector3 _shiftVector = Vector3.zero;
     private Vector3 _targetVector = Vector3.zero;
+    private Vector3 _knockbackVector = Vector3.zero;
     private MovementState _movementState = MovementState.Free;
 
     [SerializeField]
     private float _movementSpeed = 1f;
     [SerializeField]
     private float _accelerationSharpness = 1f;
+    [SerializeField]
+    private float _knockbackRecovery = 1f;
 
     private Transform _target = null;
     private float _pollingFrequency = 1f;
@@ -100,6 +106,11 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
         {
             _shiftVector = Vector3.zero;
         }
+        
+        if (_knockbackVector.sqrMagnitude > 0)
+        {
+            _knockbackVector = Vector3.Lerp(_knockbackVector, Vector3.zero, _knockbackRecovery * Time.deltaTime);
+        }
 
         if (_movementState is MovementState.Free or MovementState.Slowed)
         {
@@ -128,7 +139,7 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
 
     private void FixedUpdate()
     {
-        _rigidbody.linearVelocity = _movementVector + _shiftVector;
+        _rigidbody.linearVelocity = _movementVector + _shiftVector + _knockbackVector;
     }
 
     public void AddTarget(Transform targetTransform)
@@ -179,6 +190,13 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
             punchDirection *= -1f;
         }
 
+        if (damageInfo.Knockback > _weight)
+        {
+            var diff = damageInfo.Knockback - _weight;
+            var knockDir = (transform.position - damageInfo.SourceTransform.position).normalized;
+            _knockbackVector = knockDir * diff;
+        }
+
         Tween.Color(_unitSprite, Color.red, Color.white, 0.2f);
         Tween.PunchLocalRotation(_visualsTransform, Vector3.forward * punchDirection, 0.2f, 10, asymmetryFactor: 0.8f);
 
@@ -211,7 +229,9 @@ public class UnitBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUser
     {
         return new DamageInfo()
         {
-            Damage = data.AttackDataSO.Damage,
+            Damage = Mathf.FloorToInt(
+                data.UsedItem.ItemData.Damage * data.AttackDataSO.AttackScaling),
+            Knockback = data.UsedItem.ItemData.Knockback,
             SourceTransform = transform,
             SourceFaction = _faction
         };

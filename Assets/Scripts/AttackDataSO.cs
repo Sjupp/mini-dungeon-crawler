@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Attack", menuName = "Create Attack")]
 public class AttackDataSO : ScriptableObject
 {
-    public int Damage;
+    public float AttackScaling = 1.0f;
     //public float Sharpness; ???
     //public float Sturdiness; ???
 

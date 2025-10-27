@@ -156,7 +156,7 @@ public class AttackSequenceGraphWindow : EditorWindow
         GUILayout.Label($"Input: {command.WeaponCommand.InputType}", EditorStyles.label);
         GUILayout.Label($"Time: {command.WeaponCommand.Timestamp:0.00}s", EditorStyles.label);
         GUILayout.Label($"Attack: {(command.AttackData != null ? command.AttackData.name : "N/A")}", EditorStyles.label);
-        GUILayout.Label($"Damage: {(command.AttackData != null ? command.AttackData.Damage : "N/A")}", EditorStyles.label);
+        GUILayout.Label($"AttackScaling: {(command.AttackData != null ? command.AttackData.AttackScaling : "N/A")}", EditorStyles.label);
         GUILayout.EndArea();
     }
 

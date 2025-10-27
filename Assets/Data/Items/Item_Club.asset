@@ -15,5 +15,7 @@ MonoBehaviour:
   ItemID: 10
   ItemName: Club
   WeaponType: 4
+  Damage: 3
+  Knockback: 3
   IdleAnimationName: Hammer_Idle
   Sprite: {fileID: 21300000, guid: 3e55857554a5f824c9aa5590c7e2cbb7, type: 3}

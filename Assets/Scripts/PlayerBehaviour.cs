@@ -45,6 +45,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUs
     private Vector3 _offset1 = Vector3.zero;
 
     private int _health = 100;
+    private int _weight = 5;
 
     private InputAction _moveAction;
     private InputAction _jumpAction;
@@ -52,6 +53,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUs
     private Vector3 _movementVector = Vector3.zero;
     private Vector3 _targetVector = Vector3.zero;
     private Vector3 _shiftVector = Vector3.zero;
+    private Vector3 _knockbackVector = Vector3.zero;
 
     private Item _heldItemMain = null;
     private Item _heldItemOff = null;
@@ -309,7 +311,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUs
     {
         return new DamageInfo()
         {
-            Damage = data.AttackDataSO.Damage,
+            Damage = Mathf.FloorToInt(
+                data.UsedItem.ItemData.Damage * data.AttackDataSO.AttackScaling),
+            Knockback = data.UsedItem.ItemData.Knockback,
             SourceTransform = transform,
             SourceFaction = _faction
         };
@@ -379,6 +383,13 @@ public class PlayerBehaviour : MonoBehaviour, IDamagable, IModularAttackSystemUs
         if (damageInfo.SourceTransform != null && damageInfo.SourceTransform.position.x < transform.position.x)
         {
             punchDirection *= -1f;
+        }
+
+        if (damageInfo.Knockback > _weight)
+        {
+            var diff = damageInfo.Knockback - _weight;
+            var knockDir = (transform.position - damageInfo.SourceTransform.position).normalized;
+            _knockbackVector = knockDir * diff;
         }
 
         Tween.Color(_spriteRenderer, Color.red, Color.white, 0.2f);
