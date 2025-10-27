@@ -1269,7 +1269,7 @@ GameObject:
   - component: {fileID: 711998527}
   m_Layer: 0
   m_Name: 2_Decoration_Collision
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4193,7 +4193,7 @@ GameObject:
   - component: {fileID: 1975974223}
   m_Layer: 0
   m_Name: 1_Terrain
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
